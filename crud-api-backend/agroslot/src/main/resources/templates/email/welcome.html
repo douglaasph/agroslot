@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <meta name="supported-color-schemes" content="light only">
+    <title>Bem-vindo(a) ao AgroSlot</title>
+    <style>
+        body { margin: 0; padding: 0; width: 100% !important; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+        table { border-collapse: collapse; }
+        a { color: #15803d; }
+        @media only screen and (max-width: 620px) {
+          .container { width: 100% !important; }
+          .px { padding-left: 24px !important; padding-right: 24px !important; }
+          .h1 { font-size: 30px !important; }
+          .btn-table { width: 100% !important; }
+          .btn-cell { display: block !important; width: 100% !important; }
+          .btn-link { display: block !important; text-align: center !important; }
+        }
+    </style>
+</head>
+<body style="margin:0; padding:0; background-color:#f5f0ed;">
+
+<!-- Texto de pré-visualização (aparece ao lado do assunto na caixa de entrada) -->
+<div style="display:none; max-height:0; overflow:hidden; mso-hide:all; font-size:1px; line-height:1px; color:#f5f0ed; opacity:0;">
+    Sua conta está pronta. Veja como começar a monitorar sua plantação de soja.
+    &#8199;&zwnj;&#8199;&zwnj;&#8199;&zwnj;&#8199;&zwnj;&#8199;&zwnj;&#8199;&zwnj;&#8199;&zwnj;&#8199;&zwnj;
+</div>
+
+<table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#f5f0ed" style="background-color:#f5f0ed;">
+    <tr>
+        <td align="center" style="padding:0;">
+
+            <table role="presentation" class="container" width="100%" border="0" cellpadding="0" cellspacing="0" style="width:100%;">
+
+                <!-- Cartão principal -->
+                <tr>
+                    <td style="background-color:#ffffff;">
+                        <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0">
+
+                            <!-- Faixa verde superior -->
+                            <tr>
+                                <td height="6" bgcolor="#16a34a" style="height:6px; line-height:6px; font-size:0; background-color:#16a34a;">&nbsp;</td>
+                            </tr>
+
+                            <!-- Marca -->
+                            <tr>
+                                <td class="px" style="padding:32px 40px 0 40px;">
+                                    <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td width="40" height="40" align="center" valign="middle" bgcolor="#dcfce7" style="width:40px; height:40px; background-color:#dcfce7; border-radius:12px; font-size:22px; line-height:40px;">
+                                                &#127793;
+                                            </td>
+                                            <td style="padding-left:12px; font-family:'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif; font-size:22px; font-weight:700; letter-spacing:-0.3px; color:#166534;">
+                                                AgroSlot
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+
+                            <!-- Título -->
+                            <tr>
+                                <td class="px" style="padding:36px 40px 0 40px; font-family:'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif;">
+                                    <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td bgcolor="#dcfce7" style="background-color:#dcfce7; border-radius:999px; padding:6px 14px; font-family:'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif; font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#166534;">
+                                                Boas-vindas
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <h1 class="h1" style="margin:20px 0 0 0; font-family:'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif; font-size:36px; line-height:1.15; font-weight:700; letter-spacing:-0.8px; color:#3b2c27;">
+                                        Sua conta está pronta.<br>
+                                        <span style="color:#16a34a;">Plante, fotografe, descubra.</span>
+                                    </h1>
+                                </td>
+                            </tr>
+
+                            <!-- Texto -->
+                            <tr>
+                                <td class="px" style="padding:24px 40px 0 40px; font-family:'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif; font-size:16px; line-height:1.65; color:#475569;">
+                                    <p style="margin:0 0 14px 0;">
+                                        Olá, <strong style="color:#3b2c27;" th:text="${nome}">Fulano</strong>!
+                                    </p>
+                                    <p style="margin:0;">
+                                        Que bom ter você no <strong style="color:#3b2c27;">AgroSlot</strong>. Sua conta foi criada com sucesso e
+                                        você já pode organizar suas plantações em slots e diagnosticar doenças foliares da soja
+                                        com visão computacional.
+                                    </p>
+                                </td>
+                            </tr>
+
+                            <!-- Como funciona -->
+                            <tr>
+                                <td class="px" style="padding:32px 40px 0 40px; font-family:'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif;">
+                                    <h2 style="margin:0 0 6px 0; font-size:22px; line-height:1.3; font-weight:700; letter-spacing:-0.4px; color:#3b2c27;">Como começar</h2>
+                                    <p style="margin:0; font-size:15px; line-height:1.6; color:#64748b;">
+                                        Quatro passos para levar a visão computacional direto para o campo.
+                                    </p>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="px" style="padding:24px 40px 0 40px; font-family:'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif;">
+                                    <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0">
+
+                                        <tr>
+                                            <td valign="top" width="40" style="width:40px; padding:0 16px 22px 0;">
+                                                <table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr>
+                                                    <td width="40" height="40" align="center" valign="middle" bgcolor="#dcfce7" style="width:40px; height:40px; background-color:#dcfce7; border-radius:12px; font-size:16px; font-weight:700; line-height:40px; color:#166534;">1</td>
+                                                </tr></table>
+                                            </td>
+                                            <td valign="top" style="padding:0 0 22px 0; font-size:15px; line-height:1.55; color:#475569;">
+                                                <strong style="display:block; font-size:16px; color:#3b2c27; margin-bottom:2px;">Organize sua plantação</strong>
+                                                Crie plantações e divida o terreno visualmente em slots facilmente gerenciáveis.
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td valign="top" width="40" style="width:40px; padding:0 16px 22px 0;">
+                                                <table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr>
+                                                    <td width="40" height="40" align="center" valign="middle" bgcolor="#dcfce7" style="width:40px; height:40px; background-color:#dcfce7; border-radius:12px; font-size:16px; font-weight:700; line-height:40px; color:#166534;">2</td>
+                                                </tr></table>
+                                            </td>
+                                            <td valign="top" style="padding:0 0 22px 0; font-size:15px; line-height:1.55; color:#475569;">
+                                                <strong style="display:block; font-size:16px; color:#3b2c27; margin-bottom:2px;">Cadastre suas plantas</strong>
+                                                Mantenha o registro de cada planta no seu próprio espaço e acompanhe sua evolução.
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td valign="top" width="40" style="width:40px; padding:0 16px 22px 0;">
+                                                <table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr>
+                                                    <td width="40" height="40" align="center" valign="middle" bgcolor="#dcfce7" style="width:40px; height:40px; background-color:#dcfce7; border-radius:12px; font-size:16px; font-weight:700; line-height:40px; color:#166534;">3</td>
+                                                </tr></table>
+                                            </td>
+                                            <td valign="top" style="padding:0 0 22px 0; font-size:15px; line-height:1.55; color:#475569;">
+                                                <strong style="display:block; font-size:16px; color:#3b2c27; margin-bottom:2px;">Fotografe a folha</strong>
+                                                Tire fotos diretamente pelo aplicativo ou envie imagens da sua galeria de forma simples.
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td valign="top" width="40" style="width:40px; padding:0 16px 0 0;">
+                                                <table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr>
+                                                    <td width="40" height="40" align="center" valign="middle" bgcolor="#dcfce7" style="width:40px; height:40px; background-color:#dcfce7; border-radius:12px; font-size:16px; font-weight:700; line-height:40px; color:#166534;">4</td>
+                                                </tr></table>
+                                            </td>
+                                            <td valign="top" style="padding:0; font-size:15px; line-height:1.55; color:#475569;">
+                                                <strong style="display:block; font-size:16px; color:#3b2c27; margin-bottom:2px;">Diagnostique</strong>
+                                                Receba na hora o resultado da análise por IA com o respectivo grau de confiança.
+                                            </td>
+                                        </tr>
+
+                                    </table>
+                                </td>
+                            </tr>
+
+                            <!-- Espaço antes do rodapé -->
+                            <tr>
+                                <td height="40" style="height:40px; line-height:40px; font-size:0;">&nbsp;</td>
+                            </tr>
+
+                            <!-- Rodapé institucional -->
+                            <tr>
+                                <td class="px" bgcolor="#3b2c27" style="background-color:#3b2c27; padding:32px 40px; font-family:'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif;">
+                                    <p style="margin:0 0 6px 0; font-size:18px; font-weight:700; letter-spacing:-0.2px; color:#ffffff;">
+                                        &#127793;&nbsp; AgroSlot
+                                    </p>
+                                    <p style="margin:0 0 20px 0; font-size:13px; line-height:1.6; color:#e8ded8;">
+                                        Projeto acadêmico com foco na inovação agrícola através da aplicação de visão computacional.
+                                    </p>
+                                    <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td bgcolor="#4a3832" style="background-color:#4a3832; border:1px solid #5d4a43; border-radius:10px; padding:12px 16px; font-size:13px; line-height:1.5; color:#e8ded8;">
+                                                <strong style="color:#ffffff;">Instituto Federal de Pernambuco</strong><br>
+                                                Análise e Desenvolvimento de Sistemas
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Nota final fora do cartão -->
+                <tr>
+                    <td align="center" style="padding:20px 24px 24px 24px; font-family:'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif; font-size:12px; line-height:1.6; color:#8c6e61;">
+                        Você recebeu este e-mail porque uma conta foi criada no AgroSlot com este endereço.<br>
+                        &copy; AgroSlot &middot; Trabalho acadêmico sem fins comerciais.
+                    </td>
+                </tr>
+
+            </table>
+
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

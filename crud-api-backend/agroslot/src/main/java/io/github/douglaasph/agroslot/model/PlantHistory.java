@@ -26,7 +26,6 @@ public class PlantHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    // Muitos registros de historico pertencem a UMA planta
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "planta_id", nullable = false)
     private Plant planta;
@@ -34,7 +33,6 @@ public class PlantHistory {
     @Column(length = 500)
     private String foto;
 
-    // O banco preenche com CURRENT_TIMESTAMP ---> o Java nao envia esse campo
     @Column(name = "upload_date", nullable = false, insertable = false, updatable = false)
     private LocalDateTime uploadDate;
 

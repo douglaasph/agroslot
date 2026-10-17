@@ -8,6 +8,8 @@ export default function Input({
     onChangeText,
     secureTextEntry = false,
     keyboardType = 'default',
+    error = false,
+    errorMessage = '',
 }) {
     return (
         <View style={{
@@ -23,8 +25,8 @@ export default function Input({
             <TextInput
                 style={{
                     height: 60,
-                    borderWidth: 1,
-                    borderColor: Colors.colorSoilLight.color,
+                    borderWidth: error ? 2 : 1,
+                    borderColor: error ? Colors.colorDanger.color : Colors.colorSoilLight.color,
                     borderRadius: 8,
                     paddingHorizontal: 12,
                     fontSize: 16,
@@ -38,6 +40,7 @@ export default function Input({
                 secureTextEntry={secureTextEntry}
                 keyboardType={keyboardType}
             />
+            <Text style={{ color: Colors.colorDanger.color, display: error ? 'flex' : 'none' }}>{errorMessage}</Text>
         </View>
     );
 }

@@ -11,7 +11,6 @@ import io.github.douglaasph.agroslot.service.AuthService;
 
 @RestController 
 @RequestMapping("/auth")
-
 public class AuthController {
 
     private final AuthService authService;

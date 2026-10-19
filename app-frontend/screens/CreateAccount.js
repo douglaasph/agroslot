@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { ScrollView, Text, View } from "react-native";
+import { Alert, ScrollView, Text, View } from "react-native";
 import ThemedStyles, { Colors } from "../styles/stylesheets";
 import BackButtonTest from "../components/BackButtonTest";
 import { useState } from "react";
@@ -9,6 +9,7 @@ import { Ionicons } from "@expo/vector-icons";
 import BasicCard from "../components/BasicCard";
 import Input from "../components/BasicInput";
 import { validateEmail, validatePassword } from "../common/Validation";
+import { createAccount } from "../services/auth";
 
 export default function CreateAccount({ navigation }) {
     const styles = ThemedStyles();
@@ -25,6 +26,17 @@ export default function CreateAccount({ navigation }) {
     const [emailError, setEmailError] = useState(false);
     const [passwordError, setPasswordError] = useState(false);
     const [confirmPasswordError, setConfirmPasswordError] = useState(false);
+    const [createAccountError, setCreateAccountError] = useState(false);
+    const [createAccountErrorMessage, setCreateAccountErrorMessage] = useState('');
+
+    // alert de sucesso
+    const showAlert = () => {
+        Alert.alert(
+            "Sucesso",
+            "Conta criada com sucesso! Faça login com as suas credenciais.",
+            { cancelable: true }
+        );
+    };
 
     // handle create
     function handleCreate() {
@@ -33,6 +45,8 @@ export default function CreateAccount({ navigation }) {
         setPasswordError(false);
         setConfirmPasswordError(false);
         setFullNameError(false);
+        setCreateAccountError(false);
+        setCreateAccountErrorMessage('');
 
         let validEmail = validateEmail(email);
         let validPassword = validatePassword(password);
@@ -52,14 +66,28 @@ export default function CreateAccount({ navigation }) {
             setPasswordError(false);
             setConfirmPasswordError(false);
             setFullNameError(false);
-            setEmail('');
-            setPassword('');
-            setConfirmPassword('');
-            setFullName('');
 
-            // ação conclusiva
-            // navigation.navigate('Home');
-            alert('Conta criada com sucesso!')
+            async function tryCreateAccount({ email, fullName, password }) {
+                const res = await createAccount({ email, fullName, password });
+
+                if (!res.success) {
+                    setCreateAccountError(true);
+                    setCreateAccountErrorMessage(res.error);
+                    return;
+                } else {
+                    setEmail('');
+                    setPassword('');
+                    setConfirmPassword('');
+                    setFullName('');
+
+                    // ação conclusiva
+                    showAlert();
+                    navigation.navigate('Login');
+                }
+            }
+
+            tryCreateAccount({ email, fullName, password });
+
         }
 
     }
@@ -130,6 +158,8 @@ export default function CreateAccount({ navigation }) {
                             secureTextEntry
                             errorMessage="Senhas não coincidem"
                         />
+
+                        <Text style={{ color: Colors.colorDanger.color, display: createAccountError ? 'flex' : 'none' }}>Erro: {createAccountErrorMessage}</Text>
 
                         <BasicButton onPress={handleCreate} disabled={false} loading={loading} title={'Criar conta'} />
 

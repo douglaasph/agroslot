@@ -5,15 +5,25 @@ import BackButtonTest from "../components/BackButtonTest";
 import Popup from "../components/Modal";
 import { useState } from "react";
 import BasicButton from "../components/BasicButton";
+import { logout } from "../services/auth";
 
 export default function HomeScreen({ navigation }) {
   const styles = ThemedStyles();
   const [popupVisible, setPopupVisible] = useState(false);
 
+  const handleLogout = async () => {
+    await logout();
+
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Login' }]
+    })
+  }
+
   return (
     <View style={styles.container}>
       <Text>AgroSlot.</Text>
-      <BackButtonTest navigation={navigation} />
+      <BasicButton title="Logout" onPress={handleLogout} />
       <BasicButton
         title="show popup"
         onPress={() => setPopupVisible(true)}

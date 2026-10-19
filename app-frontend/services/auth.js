@@ -10,7 +10,8 @@ export async function login({ email, password }) {
 
     if (!res.ok) {
         const data = await res.json();
-        return { error: data.error, success: false }
+
+        return { error: data.message || data.error, success: false }
     }
 
     const data = await res.json();
@@ -27,7 +28,7 @@ export async function createAccount({ email, fullName, password }) {
     if (!res.ok) {
         const data = await res.json();
 
-        return { error: data.error, success: false }
+        return { error: data.message || data.error, success: false }
     }
 
     return { error: '', success: true }
@@ -39,8 +40,8 @@ export async function forgotPassword({ email }) {
     if (!res.ok) {
         const data = await res.json();
 
-        return { error: data.error, success: false }
+        return { error: data.message || data.error, success: false }
     }
 
-    return { error: '', success: false }
+    return { error: '', success: true }
 }

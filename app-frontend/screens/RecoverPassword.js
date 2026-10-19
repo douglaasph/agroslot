@@ -55,6 +55,7 @@ export default function RecoverPassword({ navigation }) {
                 if (!res.success) {
                     setRecoverError(true);
                     setRecoverErrorMessage(res.error);
+                    console.log("wasn't a success")
                     return;
                 } else {
                     setEmailError(false);

@@ -27,7 +27,7 @@ export default function BasicButton({ disabled, loading, onPress, title }) {
                 :
                 <Text
                     style={{
-                        color: Colors.background.backgroundColor,
+                        color: `${Colors.background.backgroundColor}`,
                         fontWeight: `${disabled ? '500' : '700'}`,
                         fontSize: 18,
                         textAlign: 'center'

@@ -34,7 +34,6 @@ public class Plantation {
     @Column(nullable = false)
     private Integer linhas;
 
-    // plantacoes(no plural) pertencem a um user
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User usuario;

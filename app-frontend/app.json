@@ -4,7 +4,8 @@
     "slug": "app-frontend",
     "version": "1.0.0",
     "plugins": [
-      "expo-status-bar"
+      "expo-status-bar",
+      "expo-secure-store"
     ]
   }
 }

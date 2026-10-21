@@ -1,23 +1,13 @@
-import { Link } from 'react-router-dom'
+import { Navigate, useSearchParams } from 'react-router-dom'
+import ResetPasswordForm from './components/ResetPasswordForm'
 
 export default function ResetPasswordPage() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-4 px-6 text-center">
-      <h1 className="text-3xl font-bold text-earth-900">
-        Rota protegida funcionando
-      </h1>
+  const [searchParams] = useSearchParams()
+  const token = searchParams.get('token')?.trim()
 
-      <p className="max-w-lg text-slate-600">
-        O parâmetro token está presente. O formulário de redefinição será
-        integrado nas próximas etapas.
-      </p>
+  if (!token) {
+    return <Navigate to="/" replace />
+  }
 
-      <Link
-        to="/"
-        className="font-semibold text-primary-700 underline underline-offset-4"
-      >
-        Voltar para a página inicial
-      </Link>
-    </main>
-  )
+  return <ResetPasswordForm token={token} />
 }

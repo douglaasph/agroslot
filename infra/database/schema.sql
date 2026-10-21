@@ -1,10 +1,12 @@
 CREATE TYPE especie_planta AS ENUM ('SOJA');
 
 CREATE TABLE usuarios (
-    id       INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    nome     VARCHAR(255) NOT NULL,
-    email    VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL
+    id                       INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nome                     VARCHAR(255) NOT NULL,
+    email                    VARCHAR(255) NOT NULL UNIQUE,
+    password                 VARCHAR(255) NOT NULL,
+    reset_token_hash         VARCHAR(64) UNIQUE,
+    reset_token_expires_at   TIMESTAMP WITH TIME ZONE
 );
 
 CREATE TABLE plantacao (
@@ -44,5 +46,8 @@ CREATE TABLE historico_planta (
         ON DELETE CASCADE
 );
 
-CREATE INDEX idx_plantacao_user_id      ON plantacao (user_id);
-CREATE INDEX idx_historico_planta_id    ON historico_planta (planta_id);
+CREATE INDEX idx_plantacao_user_id
+    ON plantacao (user_id);
+
+CREATE INDEX idx_historico_planta_id
+    ON historico_planta (planta_id);

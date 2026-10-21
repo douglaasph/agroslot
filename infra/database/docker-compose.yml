@@ -9,7 +9,7 @@ services:
       POSTGRES_USER: agroslot_user
       POSTGRES_PASSWORD: agroslot_pass_dev
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro

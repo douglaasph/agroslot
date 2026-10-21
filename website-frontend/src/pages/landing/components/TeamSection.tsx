@@ -1,5 +1,5 @@
-import { Users } from 'lucide-react'
-import { team } from '../data/team'
+import { Users } from 'lucide-react';
+import { team } from '../data/team';
 
 export default function TeamSection() {
   return (
@@ -31,10 +31,9 @@ export default function TeamSection() {
               <div className="mb-6 size-32 overflow-hidden rounded-full bg-earth-200 shadow-md ring-4 ring-white">
                 <img
                   src={member.photoUrl}
-                  alt={`Avatar provisório de ${member.name}`}
+                  alt={`Imagem de ${member.name}`}
                   className="size-full object-cover"
                   loading="lazy"
-                  referrerPolicy="no-referrer"
                 />
               </div>
 
@@ -51,10 +50,9 @@ export default function TeamSection() {
 
         <p className="mt-8 flex items-center justify-center gap-2 text-center text-sm text-slate-500">
           <Users className="size-4 shrink-0" aria-hidden="true" />
-          As imagens dos integrantes serão atualizadas com fotos reais
-          autorizadas.
+          Conheça os integrantes da equipe do AgroSlot.
         </p>
       </div>
     </section>
-  )
+  );
 }

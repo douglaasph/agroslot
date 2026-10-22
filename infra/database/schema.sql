@@ -1,9 +1,9 @@
 CREATE TYPE especie_planta AS ENUM ('SOJA');
 
 CREATE TABLE usuarios (
-    id       INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    nome     VARCHAR(255) NOT NULL,
-    email    VARCHAR(255) NOT NULL UNIQUE,
+    id                       INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nome                     VARCHAR(255) NOT NULL,
+    email                    VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL
 );
 

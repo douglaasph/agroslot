@@ -10,7 +10,7 @@ export default function AppRoutes() {
         <Route path="/" element={<LandingPage />} />
 
         <Route
-          path="/recuperar-senha"
+          path="/redefinir-senha"
           element={
             <RequireToken>
               <ResetPasswordPage />

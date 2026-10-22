@@ -13,17 +13,15 @@ import org.springframework.web.server.ResponseStatusException;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.jwtService = jwtService;
     }
 
     @Transactional
-    public void resetPassword(String email, String currentPassword, String newPassword) {
-        User user = findUser(email);
+    public void resetPassword(String userId, String currentPassword, String newPassword) {
+        User user = findUser(userId);
 
         if (user.getPassword().equals(currentPassword)) {
             user.setPassword(passwordEncoder.encode(newPassword));
@@ -32,8 +30,8 @@ public class UserService {
     }
 
     @Transactional
-    public ChangeUserDataResponse changeData(String currentEmail, String newEmail, String nome) {
-        User user = findUser(currentEmail);
+    public ChangeUserDataResponse changeData(String userId, String newEmail, String nome) {
+        User user = findUser(userId);
 
         if (newEmail != null && !newEmail.isBlank()) {
             String normalized = newEmail.trim().toLowerCase();
@@ -46,13 +44,12 @@ public class UserService {
             user.setNome(nome.trim());
         }
 
-        String token = jwtService.generateToken(user.getEmail());
-
-        return new ChangeUserDataResponse(user.getNome(), user.getEmail(), token, "Bearer");
+        userRepository.save(user);
+        return new ChangeUserDataResponse(user.getNome(), user.getEmail());
     }
 
-    private User findUser(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new ResponseStatusException(
+    private User findUser(String userId) {
+        return userRepository.findById(Integer.parseInt(userId)).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.UNAUTHORIZED,
                 "Não existe um usuário com este email cadastrado."
         ));

@@ -29,33 +29,30 @@ public class JwtService {
         this.expirationMs = expirationMs;
     }
 
-    // Gera um token JWT pro user
-    public String generateToken(String email) {
+    public String generateToken(String userId) {
 
         Date now = new Date();
         Date expiration = new Date(now.getTime() + expirationMs);
 
         return Jwts.builder()
-                .subject(email)
+                .subject(userId)
                 .issuedAt(now)
                 .expiration(expiration)
                 .signWith(signingKey)
                 .compact();
     }
 
-    // Extrai o e-mail do suer partir do token
     public String extractSubject(String token) {
         return extractAllClaims(token).getSubject();
     }
 
-    // Verifica a assinatura, a validade e o user do token
-    public boolean isTokenValid(String token, String email) {
+    public boolean isTokenValid(String token, String userId) {
         try {
             Claims claims = extractAllClaims(token);
 
             Date expiration = claims.getExpiration();
 
-            return email.equals(claims.getSubject())
+            return userId.equals(claims.getSubject())
                     && expiration != null
                     && expiration.after(new Date());
 
@@ -64,7 +61,6 @@ public class JwtService {
         }
     }
 
-    // Lê as informações de um token e analisa a assinatura 
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
                 .verifyWith(signingKey)

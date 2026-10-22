@@ -8,6 +8,7 @@ import BasicCard from "../components/BasicCard";
 import { validateEmail, validatePassword } from "../common/Validation";
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { login } from "../services/auth";
 
 export default function LoginScreen({ navigation }) {
   const styles = ThemedStyles();
@@ -19,11 +20,16 @@ export default function LoginScreen({ navigation }) {
   // states
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  const [loginError, setLoginError] = useState(false);
+  const [loginErrorMessage, setLoginErrorMessage] = useState('');
+
 
   // handle login
   function handleLogin() {
     setEmailError(false);
     setPasswordError(false);
+    setLoginError(false);
+    setLoginErrorMessage('');
 
     let validEmail = validateEmail(email);
     let validPassword = validatePassword(password);
@@ -33,11 +39,26 @@ export default function LoginScreen({ navigation }) {
       setEmailError(!validEmail);
       setPasswordError(!validPassword);
     } else {
-      setEmailError(false);
-      setPasswordError(false);
-      setEmail('');
-      setPassword('');
-      navigation.navigate('Home');
+
+      async function tryLogin({ email, password }) {
+        const res = await login({ email, password });
+        if (!res.success) {
+          setEmailError(false);
+          setPasswordError(false);
+          setLoginError(true);
+          setLoginErrorMessage(res.error);
+          return;
+        } else {
+          setEmailError(false);
+          setPasswordError(false);
+          setEmail('');
+          setPassword('');
+          navigation.navigate('Home');
+        }
+      }
+
+      tryLogin({ email: email, password: password })
+
     }
 
   }
@@ -83,6 +104,8 @@ export default function LoginScreen({ navigation }) {
             secureTextEntry
             errorMessage="Senha inválida"
           />
+
+          <Text style={{ color: Colors.colorDanger.color, display: loginError ? 'flex' : 'none' }}>Erro: {loginErrorMessage}</Text>
 
           <Text style={{ textAlign: 'right', color: Colors.colorPrimaryLight.color }} onPress={() => navigation.navigate('Recuperar Senha')}>Esqueci a minha senha</Text>
 

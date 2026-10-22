@@ -9,6 +9,7 @@ import BasicCard from "../components/BasicCard";
 import Input from "../components/BasicInput";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
+import { forgotPassword } from "../services/auth";
 
 export default function RecoverPassword({ navigation }) {
     const styles = ThemedStyles();
@@ -19,6 +20,8 @@ export default function RecoverPassword({ navigation }) {
     // states
     const [loading, setLoading] = useState(false);
     const [emailError, setEmailError] = useState(false);
+    const [recoverError, setRecoverError] = useState(false);
+    const [recoverErrorMessage, setRecoverErrorMessage] = useState('');
 
     // success alert
     const showAlert = () => {
@@ -33,6 +36,8 @@ export default function RecoverPassword({ navigation }) {
     function handleRecover() {
         setLoading(true);
         setEmailError(false);
+        setRecoverError(false);
+        setRecoverErrorMessage('');
 
         let validEmail = validateEmail(email);
 
@@ -45,9 +50,22 @@ export default function RecoverPassword({ navigation }) {
             setEmailError(false);
             setEmail('');
 
-            // ação conclusiva
-            // navigation.navigate('Login')
-            showAlert();
+            async function tryRecoverPassword({ email }) {
+                const res = await forgotPassword({ email });
+                if (!res.success) {
+                    setRecoverError(true);
+                    setRecoverErrorMessage(res.error);
+                    console.log("wasn't a success")
+                    return;
+                } else {
+                    setEmailError(false);
+                    setEmail('');
+                    showAlert();
+                }
+            }
+
+            tryRecoverPassword({ email: email })
+
         }
 
     }
@@ -87,6 +105,8 @@ export default function RecoverPassword({ navigation }) {
                             error={emailError}
                             errorMessage="Email inválido"
                         />
+
+                        <Text style={{ color: Colors.colorDanger.color, display: recoverError ? 'flex' : 'none' }}>Erro: {recoverErrorMessage}</Text>
 
                         <BasicButton onPress={handleRecover} disabled={false} loading={loading} title={'Enviar link'} />
 

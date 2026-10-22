@@ -12,6 +12,4 @@ import lombok.Setter;
 public class ChangeUserDataResponse {
     private String nome;
     private String email;
-    private String accessToken;
-    private String tokenType;
 }

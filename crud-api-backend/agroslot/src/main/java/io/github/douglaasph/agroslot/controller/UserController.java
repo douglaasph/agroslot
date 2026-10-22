@@ -31,7 +31,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping
+    @PutMapping
     public ResponseEntity<ChangeUserDataResponse> changeData(
             Authentication authentication,
             @Valid @RequestBody ChangeUserDataRequest request

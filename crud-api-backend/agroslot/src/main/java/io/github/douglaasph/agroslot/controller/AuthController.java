@@ -13,28 +13,25 @@ import io.github.douglaasph.agroslot.dto.auth.LoginRequest;
 import io.github.douglaasph.agroslot.dto.auth.LoginResponse;
 import io.github.douglaasph.agroslot.dto.auth.RegisterRequest;
 import io.github.douglaasph.agroslot.dto.auth.RegisterResponse;
-import io.github.douglaasph.agroslot.dto.auth.ResetPasswordRequest;
 import io.github.douglaasph.agroslot.service.AuthService;
-import io.github.douglaasph.agroslot.service.PasswordResetService;
-import jakarta.validation.Valid;
 
-@RestController
+
+@RestController 
 @RequestMapping("/auth")
+
+//classe responspavel por receber as requisitções http de autenticação e orientar elas pro caminho correto
 public class AuthController {
 
     private final AuthService authService;
-    private final PasswordResetService passwordResetService;
 
-    public AuthController(
-            AuthService authService,
-            PasswordResetService passwordResetService
-    ) {
+    public AuthController(AuthService authService) {
         this.authService = authService;
-        this.passwordResetService = passwordResetService;
     }
 
+    //define a rota de cadastro 
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(
+            //requestbody permite o string oconverter o json em objeto
             @RequestBody RegisterRequest request
     ) {
         RegisterResponse response = authService.register(request);
@@ -43,7 +40,7 @@ public class AuthController {
                 .status(HttpStatus.CREATED)
                 .body(response);
     }
-
+    //definicao da rota d elogin
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(
             @RequestBody LoginRequest request
@@ -53,22 +50,17 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+    //endopoint para recuperar senha
+    //a ideia é pegar o email do user e enviar um email para ele com o link pra rec
     @PostMapping("/forgot-password")
     public ResponseEntity<ForgotPasswordResponse> forgotPassword(
-            @Valid @RequestBody ForgotPasswordRequest request
+            @RequestBody ForgotPasswordRequest request
     ) {
         ForgotPasswordResponse response =
-                passwordResetService.requestPasswordReset(request);
+                authService.forgotPassword(request);
 
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/reset-password")
-    public ResponseEntity<Void> resetPassword(
-            @Valid @RequestBody ResetPasswordRequest request
-    ) {
-        passwordResetService.resetPassword(request);
 
-        return ResponseEntity.ok().build();
-    }
 }

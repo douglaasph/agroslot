@@ -23,10 +23,13 @@ public class UserService {
     public void resetPassword(String userId, String currentPassword, String newPassword) {
         User user = findUser(userId);
 
-        if (user.getPassword().equals(currentPassword)) {
+        if (passwordEncoder.matches(currentPassword, user.getPassword())) {
             user.setPassword(passwordEncoder.encode(newPassword));
             userRepository.save(user);
-        };
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Senha atual incorreta.");
+        }
+        ;
     }
 
     @Transactional
@@ -51,7 +54,6 @@ public class UserService {
     private User findUser(String userId) {
         return userRepository.findById(Integer.parseInt(userId)).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.UNAUTHORIZED,
-                "Não existe um usuário com este email cadastrado."
-        ));
+                "Não existe um usuário com este email cadastrado."));
     }
 }

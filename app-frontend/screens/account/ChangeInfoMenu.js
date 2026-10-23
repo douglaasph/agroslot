@@ -1,9 +1,8 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { Button, View } from "react-native-web";
+import { View } from "react-native-web";
 import ThemedStyles, { Colors } from "../../styles/stylesheets";
 import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
 import { Pressable, Text } from "react-native";
 
 export default function ChangeInfoMenu({ navigation }) {
@@ -28,7 +27,7 @@ export default function ChangeInfoMenu({ navigation }) {
 
             </LinearGradient >
 
-            <Pressable style={[styles.shadow, { width: '90%', backgroundColor: Colors.whiteBackground.backgroundColor, padding: 16, borderRadius: 10, borderColor: Colors.brownBorder.color, borderWidth: 2, flexDirection: 'row', justifyContent: 'space-between' }]}>
+            <Pressable onPress={() => navigation.navigate('Alterar Nome ou Email')} style={[styles.shadow, { width: '90%', backgroundColor: Colors.whiteBackground.backgroundColor, padding: 16, borderRadius: 10, borderColor: Colors.brownBorder.color, borderWidth: 2, flexDirection: 'row', justifyContent: 'space-between' }]}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                     <Ionicons name="clipboard-sharp" size={24} color={Colors.softGray.color} />
                     <Text>Alterar Nome ou Email</Text>

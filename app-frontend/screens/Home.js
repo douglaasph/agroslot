@@ -1,18 +1,18 @@
 import { StatusBar } from "expo-status-bar";
 import { Pressable, Text, View } from "react-native";
 import ThemedStyles, { Colors } from "../styles/stylesheets";
-import BackButtonTest from "../components/BackButtonTest";
 import Popup from "../components/Modal";
 import { useEffect, useState } from "react";
 import BasicButton from "../components/BasicButton";
 import { logout } from "../services/auth";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
+import { getMe } from "../services/user";
 
 export default function HomeScreen({ navigation }) {
   const styles = ThemedStyles();
   const [popupVisible, setPopupVisible] = useState(false);
-  const [user, setUser] = useState({ 'nome': 'João da Silva', email: 'joazinho@gmail.com' });
+  const [user, setUser] = useState(null);
 
   const handleLogout = async () => {
     await logout();
@@ -23,13 +23,17 @@ export default function HomeScreen({ navigation }) {
     })
   }
 
-  // useEffect(() => {
-  //   async function getUser() {
-  //     const user = { 'nome': 'João da Silva', email: 'joazinho@gmail.com' };
-  //     setUser(user);
-  //   }
-  //   getUser()
-  // })
+  useEffect(() => {
+    async function getUser() {
+      const user = await getMe();
+      if (!user.success) {
+        handleLogout();
+      } else {
+        setUser(user.user);
+      }
+    }
+    getUser();
+  }, [])
 
   return (
     <View style={[styles.container, { backgroundColor: Colors.background.backgroundColor, minHeight: '100%', justifyContent: 'flex-start' }]}>
@@ -49,7 +53,7 @@ export default function HomeScreen({ navigation }) {
         </View>
 
         <Pressable onPress={() => navigation.navigate('Minha Conta')} style={{ backgroundColor: Colors.colorPrimaryLight.color, borderColor: Colors.lightText.color, borderWidth: 1, height: 40, width: 40, justifyContent: 'center', alignSelf: 'center', borderRadius: '100%' }}>
-          <Text style={{ textAlign: 'center', color: Colors.whiteBackground.backgroundColor }}>{user?.nome[0] || ' '}</Text>
+          <Text style={{ textAlign: 'center', color: Colors.whiteBackground.backgroundColor }}>{user?.nome[0].toUpperCase() || ' '}</Text>
         </Pressable>
 
       </LinearGradient >

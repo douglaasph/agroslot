@@ -4,13 +4,14 @@ import ThemedStyles, { Colors } from "../styles/stylesheets";
 import BasicButton from "../components/BasicButton";
 import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { logout } from "../services/auth";
 import { Pressable, Text } from "react-native";
+import { getMe } from "../services/user";
 
 export default function MyAccount({ navigation }) {
     const styles = ThemedStyles();
-    const [user, setUser] = useState({ 'nome': 'João da Silva', email: 'joazinho@gmail.com' });
+    const [user, setUser] = useState(null);
 
     const handleLogout = async () => {
         await logout();
@@ -20,6 +21,19 @@ export default function MyAccount({ navigation }) {
             routes: [{ name: 'Login' }]
         })
     }
+
+
+    useEffect(() => {
+        async function getUser() {
+            const user = await getMe();
+            if (!user.success) {
+                handleLogout();
+            } else {
+                setUser(user.user);
+            }
+        }
+        getUser();
+    }, [])
 
     return (
         <View style={[styles.container, { backgroundColor: Colors.background.backgroundColor, minHeight: '100%', justifyContent: 'flex-start', gap: 10 }]}>
@@ -41,7 +55,7 @@ export default function MyAccount({ navigation }) {
             </LinearGradient >
             <View style={{ flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center', width: '100%', paddingVertical: 10 }}>
                 <View style={{ borderRadius: '100%', backgroundColor: Colors.colorPrimary.color, height: 50, width: 50, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', borderColor: Colors.whiteBackground.backgroundColor, borderWidth: 2 }}>
-                    <Text style={{ alignSelf: 'center', fontSize: 24, color: Colors.whiteBackground.backgroundColor }}>{user?.nome[0] || ' '}</Text>
+                    <Text style={{ alignSelf: 'center', fontSize: 24, color: Colors.whiteBackground.backgroundColor }}>{user?.nome[0].toUpperCase() || ' '}</Text>
                 </View>
                 <Text style={{ fontSize: 24 }}>{user?.nome || '...'}</Text>
                 <Text>{user?.email || '...'}</Text>

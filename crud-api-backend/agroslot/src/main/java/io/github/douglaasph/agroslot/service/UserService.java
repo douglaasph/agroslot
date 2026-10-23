@@ -1,6 +1,7 @@
 package io.github.douglaasph.agroslot.service;
 
 import io.github.douglaasph.agroslot.dto.user.ChangeUserDataResponse;
+import io.github.douglaasph.agroslot.dto.user.GetMeResponse;
 import io.github.douglaasph.agroslot.model.User;
 import io.github.douglaasph.agroslot.repository.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -49,6 +50,11 @@ public class UserService {
 
         userRepository.save(user);
         return new ChangeUserDataResponse(user.getNome(), user.getEmail());
+    }
+
+    public GetMeResponse findMe(String userId) {
+        User meComplete = this.findUser(userId);
+        return new GetMeResponse(meComplete.getNome(), meComplete.getEmail());
     }
 
     private User findUser(String userId) {

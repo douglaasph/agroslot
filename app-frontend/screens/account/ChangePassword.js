@@ -1,5 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { Button, View } from "react-native-web";
+import { View } from "react-native-web";
 import ThemedStyles, { Colors } from "../../styles/stylesheets";
 import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
@@ -66,6 +66,7 @@ export default function ChangePassword({ navigation }) {
                     setOldPassword('');
                     setNewPassword('');
                     setConfirmNewPassword('');
+                    setLoading(false);
 
                     // ação conclusiva
                     showAlert();

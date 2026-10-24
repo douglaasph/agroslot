@@ -10,10 +10,10 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
@@ -30,7 +30,7 @@ import io.github.douglaasph.agroslot.repository.UserRepository;
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 
-     @Mock
+    @Mock
     private UserRepository userRepository;
 
     @Mock
@@ -39,8 +39,22 @@ class AuthServiceTest {
     @Mock
     private JwtService jwtService;
 
-    @InjectMocks
+    @Mock
+    private SmtpEmailSender smtpEmailSender;
+
     private AuthService authService;
+
+    @BeforeEach
+    void setUp() {
+    authService = new AuthService(
+            userRepository,
+            passwordEncoder,
+            jwtService,
+            smtpEmailSender,
+            "segredo-de-teste-bem-longo-para-reset-de-senha-2026",
+            "http://localhost:5173"
+    );
+}
 
     @Test
     void deveCadastrarUsuarioComSenhaCriptografada() {
@@ -128,6 +142,7 @@ class AuthServiceTest {
         when(request.getPassword()).thenReturn("Teste123!");
 
         User user = new User();
+        user.setId(1);
         user.setEmail("teste@agroslot.com");
         user.setPassword("hash-bcrypt-simulado");
 
@@ -139,7 +154,7 @@ class AuthServiceTest {
                 "hash-bcrypt-simulado"
         )).thenReturn(true);
 
-        when(jwtService.generateToken("teste@agroslot.com"))
+        when(jwtService.generateToken("1"))
                 .thenReturn("jwt-teste");
 
         LoginResponse response = authService.login(request);
@@ -147,7 +162,7 @@ class AuthServiceTest {
         assertEquals("jwt-teste", response.getAccessToken());
         assertEquals("Bearer", response.getTokenType());
 
-        verify(jwtService).generateToken("teste@agroslot.com");
+        verify(jwtService).generateToken("1");
         }
 
         @Test

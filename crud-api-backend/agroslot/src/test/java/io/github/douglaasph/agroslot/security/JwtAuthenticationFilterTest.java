@@ -4,7 +4,6 @@ package io.github.douglaasph.agroslot.security;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -53,46 +52,47 @@ class JwtAuthenticationFilterTest {
         SecurityContextHolder.clearContext();
     }
 
-    @Test
-    void deveAutenticarRequisicaoComTokenValido() throws Exception {
+   @Test
+void deveAutenticarRequisicaoComTokenValido() throws Exception {
 
-        String token = "token-teste";
-        String email = "teste@agroslot.com";
+    String token = "token-teste";
+    String subject = "1";
 
-        MockHttpServletRequest request =
-                new MockHttpServletRequest();
+    MockHttpServletRequest request =
+            new MockHttpServletRequest();
 
-        request.addHeader("Authorization", "Bearer " + token);
+    request.addHeader("Authorization", "Bearer " + token);
 
-        MockHttpServletResponse response =
-                new MockHttpServletResponse();
+    MockHttpServletResponse response =
+            new MockHttpServletResponse();
 
-        MockFilterChain chain = new MockFilterChain();
+    MockFilterChain chain = new MockFilterChain();
 
-        User user = new User();
-        user.setEmail(email);
-        user.setPassword("hash-bcrypt-simulado");
+    User user = new User();
+    user.setId(1);
+    user.setEmail("teste@agroslot.com");
+    user.setPassword("hash-bcrypt-simulado");
 
-        when(jwtService.extractSubject(token))
-                .thenReturn(email);
+    when(jwtService.extractSubject(token))
+            .thenReturn(subject);
 
-        when(userRepository.findByEmail(email))
-                .thenReturn(Optional.of(user));
+    when(userRepository.findById(1))
+            .thenReturn(Optional.of(user));
 
-        when(jwtService.isTokenValid(token, email))
-                .thenReturn(true);
+    when(jwtService.isTokenValid(token, subject))
+            .thenReturn(true);
 
-        filter.doFilter(request, response, chain);
+    filter.doFilter(request, response, chain);
 
-        Authentication authentication =
-                SecurityContextHolder.getContext()
-                        .getAuthentication();
+    Authentication authentication =
+            SecurityContextHolder.getContext()
+                    .getAuthentication();
 
-        assertNotNull(authentication);
-        assertEquals(email, authentication.getName());
+    assertNotNull(authentication);
+    assertEquals(subject, authentication.getName());
 
-        verify(userRepository).findByEmail(email);
-    }
+    verify(userRepository).findById(1);
+}
 
     @Test
     void naoDeveAutenticarTokenInvalido() throws Exception {
@@ -121,7 +121,6 @@ class JwtAuthenticationFilterTest {
                         .getAuthentication()
         );
 
-        verify(userRepository, never())
-                .findByEmail(anyString());
+        verify(userRepository, never()).findById(1);
     }
 }

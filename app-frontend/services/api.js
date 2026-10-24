@@ -28,6 +28,9 @@ export const apiFetch = (path, init = {}) => request(path, init);
 export const apiPost = (path, data, init = {}) =>
     request(path, { ...init, method: 'POST', body: JSON.stringify(data) });
 
+export const apiPut = (path, data, init = {}) =>
+    request(path, { ...init, method: 'PUT', body: JSON.stringify(data) });
+
 export const apiPatch = (path, data, init = {}) =>
     request(path, { ...init, method: 'PATCH', body: JSON.stringify(data) });
 

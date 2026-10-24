@@ -56,6 +56,17 @@ export default function ThemedStyles() {
     },
     textColor: {
       color: '#1e2d1a',
+    },
+    lightText: {
+      color: '#9CD25B',
+    },
+    shadow: {
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 4,
+
+      elevation: 5
     }
   });
 
@@ -65,6 +76,7 @@ export default function ThemedStyles() {
       backgroundColor: '#2b2b2b',
       alignItems: 'center',
       justifyContent: 'center',
+      width: '100%'
     },
     // cores do tema
     colorPrimary: {
@@ -166,6 +178,15 @@ export const Colors = {
     color: '#1e2d1a',
   },
   disabledGrayBackground: {
-    color: '#8d8d8d'
+    color: '#8d8d8d',
+  },
+  lightText: {
+    color: '#9CD25B',
+  },
+  brownBorder: {
+    color: '#F4E0C6',
+  },
+  softGray: {
+    color: '#707070'
   }
 }

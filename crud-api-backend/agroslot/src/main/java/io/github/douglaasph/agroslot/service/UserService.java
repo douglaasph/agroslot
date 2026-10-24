@@ -1,6 +1,7 @@
 package io.github.douglaasph.agroslot.service;
 
 import io.github.douglaasph.agroslot.dto.user.ChangeUserDataResponse;
+import io.github.douglaasph.agroslot.dto.user.GetMeResponse;
 import io.github.douglaasph.agroslot.model.User;
 import io.github.douglaasph.agroslot.repository.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -23,10 +24,13 @@ public class UserService {
     public void resetPassword(String userId, String currentPassword, String newPassword) {
         User user = findUser(userId);
 
-        if (user.getPassword().equals(currentPassword)) {
+        if (passwordEncoder.matches(currentPassword, user.getPassword())) {
             user.setPassword(passwordEncoder.encode(newPassword));
             userRepository.save(user);
-        };
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Senha atual incorreta.");
+        }
+        ;
     }
 
     @Transactional
@@ -48,10 +52,14 @@ public class UserService {
         return new ChangeUserDataResponse(user.getNome(), user.getEmail());
     }
 
-    public User findUser(String userId) {
+    public GetMeResponse findMe(String userId) {
+        User meComplete = this.findUser(userId);
+        return new GetMeResponse(meComplete.getNome(), meComplete.getEmail());
+    }
+
+    private User findUser(String userId) {
         return userRepository.findById(Integer.parseInt(userId)).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.UNAUTHORIZED,
-                "Não existe um usuário com este email cadastrado."
-        ));
+                "Não existe um usuário com este email cadastrado."));
     }
 }

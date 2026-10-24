@@ -41,23 +41,31 @@ public class PlantationService {
     }
 
     @Transactional
-public Plantation update(
-        Integer plantationId,
-        String userId,
-        String nome,
-        Integer capacidade,
-        Integer colunas,
-        Integer linhas
-) {
-    Plantation plantation = findOwnedPlantation(plantationId, userId);
+    public Plantation update(
+            Integer plantationId,
+            String userId,
+            String nome,
+            Integer capacidade,
+            Integer colunas,
+            Integer linhas
+    ) {
+        Plantation plantation = findOwnedPlantation(plantationId, userId);
 
-    plantation.setNome(nome.trim());
-    plantation.setCapacidade(capacidade);
-    plantation.setColunas(colunas);
-    plantation.setLinhas(linhas);
+        if (nome != null && !nome.isBlank()) {
+            plantation.setNome(nome.trim());
+        }
+        if (capacidade != null) {
+            plantation.setCapacidade(capacidade);
+        }
+        if (colunas != null) {
+            plantation.setColunas(colunas);
+        }
+        if (linhas != null) {
+            plantation.setLinhas(linhas);
+        }
 
-    return plantationRepository.save(plantation);
-}
+        return plantationRepository.save(plantation);
+    }
 
     @Transactional
     public void delete(Integer plantationId, String userId) {

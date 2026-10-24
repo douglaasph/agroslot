@@ -22,7 +22,8 @@ import io.github.douglaasph.agroslot.service.PlantationService;
 import jakarta.validation.Valid;
 
 @RestController()
-@RequestMapping({"/plantation", "/plantacoes"})public class PlantationController {
+@RequestMapping({"/plantation"})
+public class PlantationController {
     private final PlantationService plantationService;
 
     public PlantationController(PlantationService plantationService) {
@@ -54,22 +55,22 @@ import jakarta.validation.Valid;
     }
 
     @PutMapping("/{id}")
-        public ResponseEntity<PlantationResponse> update(
-        @PathVariable Integer id,
-        @RequestBody @Valid UpdatePlantationRequest req,
-        Authentication authentication
-) {
-    Plantation updated = plantationService.update(
-            id,
-            authentication.getName(),
-            req.getNome(),
-            req.getCapacidade(),
-            req.getColunas(),
-            req.getLinhas()
-    );
+    public ResponseEntity<PlantationResponse> update(
+            @PathVariable Integer id,
+            @RequestBody @Valid UpdatePlantationRequest req,
+            Authentication authentication
+    ) {
+        Plantation updated = plantationService.update(
+                id,
+                authentication.getName(),
+                req.getNome(),
+                req.getCapacidade(),
+                req.getColunas(),
+                req.getLinhas()
+        );
 
-    return ResponseEntity.ok(PlantationResponse.from(updated));
-}
+        return ResponseEntity.ok(PlantationResponse.from(updated));
+    }
 
     @DeleteMapping("/{id}")
         public ResponseEntity<Void> delete(

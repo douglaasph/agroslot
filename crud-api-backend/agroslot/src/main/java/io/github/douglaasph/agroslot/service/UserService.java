@@ -48,7 +48,7 @@ public class UserService {
         return new ChangeUserDataResponse(user.getNome(), user.getEmail());
     }
 
-    private User findUser(String userId) {
+    public User findUser(String userId) {
         return userRepository.findById(Integer.parseInt(userId)).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.UNAUTHORIZED,
                 "Não existe um usuário com este email cadastrado."

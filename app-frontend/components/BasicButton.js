@@ -2,7 +2,7 @@ import { ActivityIndicator, Button, Pressable, Text } from "react-native";
 import { Colors } from "../styles/stylesheets";
 
 // estados padrão, desabilitado e loading
-export default function BasicButton({ disabled, loading, onPress, title, color }) {
+export default function BasicButton({ disabled, loading, onPress, title, color, textColor }) {
     const fallbackFunc = () => alert('No action here.');
 
     return (
@@ -29,7 +29,7 @@ export default function BasicButton({ disabled, loading, onPress, title, color }
                 :
                 <Text
                     style={{
-                        color: `${Colors.background.backgroundColor}`,
+                        color: `${textColor || Colors.background.backgroundColor}`,
                         fontWeight: `${disabled ? '500' : '700'}`,
                         fontSize: 18,
                         textAlign: 'center'

@@ -44,3 +44,50 @@ export default function Input({
         </View>
     );
 }
+
+export function NumericInput({
+    label,
+    placeholder,
+    value,
+    onChangeValue,
+    error = false,
+    errorMessage = '',
+}) {
+    const handleChange = (text) => {
+        const sanitized = text.replace(/[^0-9]/g, "");
+        const normalized = sanitized.replace(/^0+(?=\d)/, "");
+        onChangeValue(normalized);
+    };
+
+    return (
+        <View style={{
+            width: '100%',
+            gap: 6,
+        }}>
+            {label && <Text style={{
+                fontSize: 14,
+                fontWeight: '600',
+                color: Colors.colorPrimary.color,
+            }} >{label}</Text>}
+
+            <TextInput
+                style={{
+                    height: 60,
+                    borderWidth: error ? 2 : 1,
+                    borderColor: error ? Colors.colorDanger.color : Colors.colorSoilLight.color,
+                    borderRadius: 8,
+                    paddingHorizontal: 12,
+                    fontSize: 16,
+                    color: Colors.colorPrimaryDark.color,
+                    backgroundColor: '#FFFFFF',
+                }}
+                placeholderTextColor={Colors.colorSoilLight.color}
+                placeholder={placeholder}
+                value={value}
+                onChangeText={handleChange}
+                keyboardType="numeric"
+            />
+            <Text style={{ color: Colors.colorDanger.color, display: error ? 'flex' : 'none' }}>{errorMessage}</Text>
+        </View>
+    );
+}

@@ -8,6 +8,7 @@ import MyAccount from './screens/MyAccount';
 import ChangeInfoMenu from './screens/account/ChangeInfoMenu';
 import ChangePassword from './screens/account/ChangePassword';
 import ChangeNameEmail from './screens/account/ChangeNameEmail';
+import Plantation from './screens/plantations/Plantation';
 
 const Stack = createNativeStackNavigator();
 
@@ -23,6 +24,7 @@ export default function App() {
         <Stack.Screen name="Menu de Alterar Dados da Conta" component={ChangeInfoMenu} options={{ headerShown: false }} />
         <Stack.Screen name="Alterar Senha" component={ChangePassword} options={{ headerShown: false }} />
         <Stack.Screen name="Alterar Nome ou Email" component={ChangeNameEmail} options={{ headerShown: false }} />
+        <Stack.Screen name="Plantação" component={Plantation} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

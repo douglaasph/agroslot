@@ -57,6 +57,10 @@ public class UserService {
         return new GetMeResponse(meComplete.getNome(), meComplete.getEmail());
     }
 
+    public User findUserById(String userId) {
+        return findUser(userId);
+    }
+
     private User findUser(String userId) {
         return userRepository.findById(Integer.parseInt(userId)).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.UNAUTHORIZED,

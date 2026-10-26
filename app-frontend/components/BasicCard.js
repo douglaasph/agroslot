@@ -1,4 +1,4 @@
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
 import { Colors } from '../styles/stylesheets';
 
 export default function BasicCard({ children, style }) {

@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import ThemedStyles, { Colors } from "../styles/stylesheets";
 import Popup from "../components/Modal";
 import { useEffect, useState } from "react";
@@ -8,11 +8,20 @@ import { logout } from "../services/auth";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { getMe } from "../services/user";
+import CreatePlantationForm from "../components/CreatePlantationForm";
+import { getPlantations } from "../services/plantation";
+import BasicCard from "../components/BasicCard";
+import LineProgress from "../components/LineProgress";
 
 export default function HomeScreen({ navigation }) {
   const styles = ThemedStyles();
   const [popupVisible, setPopupVisible] = useState(false);
   const [user, setUser] = useState(null);
+
+  // plantations
+  const [plantations, setPlantations] = useState([]);
+  const [fetchError, setFetchError] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   const handleLogout = async () => {
     await logout();
@@ -33,7 +42,19 @@ export default function HomeScreen({ navigation }) {
       }
     }
     getUser();
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    async function tryGetPlantations() {
+      const res = await getPlantations();
+      if (!res.success) {
+        setFetchError(true);
+      } else {
+        setPlantations(res.plantations)
+      }
+    }
+    tryGetPlantations();
+  }, [refresh]);
 
   return (
     <View style={[styles.container, { backgroundColor: Colors.background.backgroundColor, minHeight: '100%', justifyContent: 'flex-start' }]}>
@@ -59,32 +80,64 @@ export default function HomeScreen({ navigation }) {
       </LinearGradient >
       <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', width: '100%', paddingVertical: 10 }}>
         <Text style={{ fontSize: 18, fontWeight: '400', textAlign: 'center' }}>Minhas Plantações</Text>
-        <BasicButton title={"+ Nova Plantação"} />
+        <BasicButton onPress={() => setPopupVisible(true)} title={"+ Nova Plantação"} />
       </View>
-      <BasicButton title="Logout" onPress={handleLogout} />
-      <BasicButton
-        title="show popup"
-        onPress={() => setPopupVisible(true)}
-      >
 
-      </BasicButton>
+      {!fetchError ?
+
+        <ScrollView
+          style={{
+            width: '90%',
+            alignSelf: 'center',
+            flex: 1
+          }}
+          contentContainerStyle={{
+            flexGrow: 1,
+            alignItems: 'center',
+            paddingTop: 10,
+            paddingBottom: 60,
+            gap: 10
+          }}>
+          {plantations?.map((p) => (
+            <BasicCard style={{ width: '100%' }}>
+              <Pressable style={{ flex: 1, gap: 8 }} onPress={() => navigation.navigate('Plantação', { rawPlantation: p })}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <View>
+                    <Text style={{ fontSize: 20 }}>{p.nome}</Text>
+                    <Text style={{ color: Colors.softGray.color }}>{p.linhas} x {p.colunas} slots</Text>
+                  </View>
+
+                  <Ionicons name="flower-outline" size={24} color="orange" />
+                </View>
+
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={{ color: Colors.softGray.color }}>Ocupação</Text>
+                  <Text style={{ color: Colors.softGray.color }}>{p.linhas}/{p.capacidade} slots</Text>
+                </View>
+
+                <LineProgress current={p.linhas} max={p.capacidade} />
+              </Pressable>
+            </BasicCard>
+          ))}
+
+          {plantations.length === 0 ?
+            <View>
+              <Text style={{ color: Colors.softGray.color, fontWeight: '500' }}>Sem plantações ainda...</Text>
+            </View>
+
+            : null}
+
+        </ScrollView>
+        :
+        <Text style={{ color: Colors.colorDanger.color, fontWeight: '500' }}>Erro ao buscar suas plantações :/</Text>
+      }
 
       <Popup
         visible={popupVisible}
         onClose={() => setPopupVisible(false)}
       >
-        <Text style={styles.title}>
-          Eu sou um exemplo de como usar o modal
-        </Text>
+        <CreatePlantationForm onCancel={() => setPopupVisible(false)} onCreate={() => setRefresh(true)} />
 
-        <Text style={styles.description}>
-          :D
-        </Text>
-
-        <BasicButton
-          title="close"
-          onPress={() => setPopupVisible(false)}
-        />
       </Popup>
       <StatusBar style="auto" />
     </View >

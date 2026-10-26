@@ -1,6 +1,7 @@
 package io.github.douglaasph.agroslot.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,27 +18,29 @@ public class PlantationService {
 
     public PlantationService(
             PlantationRepository plantationRepository,
-            UserService userService
-    ) {
+            UserService userService) {
         this.plantationRepository = plantationRepository;
         this.userService = userService;
     }
 
-    public Plantation create(String nome, Integer capacidade, Integer colunas, Integer linhas, String userId){
+    public Plantation create(String nome, Integer capacidade, Integer colunas, Integer linhas, String userId) {
         Plantation plantation = new Plantation();
         plantation.setNome(nome);
         plantation.setCapacidade(capacidade);
         plantation.setColunas(colunas);
         plantation.setLinhas(linhas);
         plantation.setUsuario(
-                userService.findUser(userId)
-        );
+                userService.findUserById(userId));
 
         return plantationRepository.save(plantation);
     }
 
-    public List<Plantation> findAllByUser(String userId){
+    public List<Plantation> findAllByUser(String userId) {
         return plantationRepository.findByUsuarioId(Integer.parseInt(userId));
+    }
+
+    public Optional<Plantation> findByIdAndUser(String id, String userId) {
+        return plantationRepository.findByIdAndUsuarioId(Integer.parseInt(id), Integer.parseInt(userId));
     }
 
     @Transactional
@@ -47,8 +50,7 @@ public class PlantationService {
             String nome,
             Integer capacidade,
             Integer colunas,
-            Integer linhas
-    ) {
+            Integer linhas) {
         Plantation plantation = findOwnedPlantation(plantationId, userId);
 
         if (nome != null && !nome.isBlank()) {
@@ -81,15 +83,13 @@ public class PlantationService {
         } catch (NumberFormatException exception) {
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
-                    "Identidade do usuário autenticado inválida."
-            );
+                    "Identidade do usuário autenticado inválida.");
         }
 
         return plantationRepository
                 .findByIdAndUsuarioId(plantationId, numericUserId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        "Plantação não encontrada."
-                ));
+                        "Plantação não encontrada."));
     }
 }

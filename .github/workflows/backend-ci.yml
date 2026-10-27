@@ -32,4 +32,4 @@ jobs:
           cache: maven
 
       - name: Compile with Maven
-        run: ./mvnw --batch-mode --no-transfer-progress -DskipTests package
+        run: bash mvnw --batch-mode --no-transfer-progress -DskipTests package

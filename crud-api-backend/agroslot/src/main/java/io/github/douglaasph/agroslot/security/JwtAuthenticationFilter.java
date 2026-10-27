@@ -49,17 +49,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = authorization.substring(7);
 
         try {
-            String email = jwtService.extractSubject(token);
+            String subject = jwtService.extractSubject(token);
+            System.out.println(subject);
+            Integer userId = Integer.parseInt(subject);
 
             if (SecurityContextHolder.getContext().getAuthentication() == null) {
 
-                User user = userRepository.findByEmail(email).orElse(null);
+                User user = userRepository.findById(userId).orElse(null);
 
-                if (user != null && jwtService.isTokenValid(token, user.getEmail())) {
+                if (user != null && jwtService.isTokenValid(token, subject)) {
 
                     UserDetails userDetails =
                             org.springframework.security.core.userdetails.User
-                                    .withUsername(user.getEmail())
+                                    .withUsername(subject)
                                     .password(user.getPassword())
                                     .authorities("ROLE_USER")
                                     .build();

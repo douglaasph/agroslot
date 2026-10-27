@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChangeUserDataRequest {
-    @Size(max = 255,min = 10, message = "O nome deve ter no máximo 255 caracteres")
+    @Size(max = 255,min = 0, message = "O nome deve ter no máximo 255 caracteres")
     private String nome;
 
     @Email(message = "O email deve ser Válido")

@@ -1,5 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { Button, View } from "react-native-web";
+import { Button, View } from "react-native";
 import ThemedStyles, { Colors } from "../styles/stylesheets";
 import BasicButton from "../components/BasicButton";
 import { StatusBar } from "expo-status-bar";

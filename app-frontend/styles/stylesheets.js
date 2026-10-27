@@ -7,7 +7,7 @@ export default function ThemedStyles() {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#f7f2e8',
+      backgroundColor: Colors.background.backgroundColor,
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -188,5 +188,8 @@ export const Colors = {
   },
   softGray: {
     color: '#707070'
+  },
+  lightGreen: {
+    color: '#E8F5E0'
   }
 }

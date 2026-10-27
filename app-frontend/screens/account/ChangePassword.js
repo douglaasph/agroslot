@@ -1,5 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { View } from "react-native-web";
+import { View } from "react-native";
 import ThemedStyles, { Colors } from "../../styles/stylesheets";
 import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";

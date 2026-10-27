@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Input, { NumericInput } from "./BasicInput";
 import BasicButton from "./BasicButton";
-import { Text, TextInput, View } from "react-native";
+import { Alert, Text, TextInput, View } from "react-native";
 import { Colors } from "../styles/stylesheets";
 import { createPlantation, editPlantation } from "../services/plantation";
 
@@ -18,11 +18,19 @@ export default function CreatePlantationForm({ onCancel, onCreate, edit = false,
 
     useEffect(() => {
         if (edit && originalPlantation) {
-            setNomePlantacao(originalPlantation.nome);
-            setRows(originalPlantation.linhas);
-            setCols(originalPlantation.colunas);
+            setNomePlantacao(originalPlantation.nome ?? '');
+            setRows(originalPlantation.linhas ?? 0);
+            setCols(originalPlantation.colunas ?? 0);
         }
-    }, []);
+    }, [edit, originalPlantation]);
+
+    function showAlert({ title, message, cancel = true }) {
+        Alert.alert(
+            title = title,
+            message = message,
+            { cancelable: cancel }
+        );
+    };
 
     function handleSubmit() {
         // error 0
@@ -39,7 +47,7 @@ export default function CreatePlantationForm({ onCancel, onCreate, edit = false,
                 setSubmitErrorMessage(res.error);
                 setSubmitError(true);
             } else {
-                alert("Plantação criada com sucesso!");
+                showAlert({ title: "Sucesso", message: "Plantação criada com sucesso!" });
                 onCreate();
                 onCancel();
             }
@@ -63,7 +71,7 @@ export default function CreatePlantationForm({ onCancel, onCreate, edit = false,
                 setSubmitErrorMessage(res.error);
                 setSubmitError(true);
             } else {
-                alert("Plantação editada com sucesso!");
+                showAlert({ title: "Sucesso", message: "Plantação editada com sucesso!" });
                 onCreate();
                 onCancel();
             }
@@ -102,7 +110,7 @@ export default function CreatePlantationForm({ onCancel, onCreate, edit = false,
             />
 
             <View style={{ paddingVertical: 8, borderRadius: 4 }}>
-                <Text style={{ padding: 5, borderRadius: 1, backgroundColor: Colors.lightGreen.color, color: Colors.colorPrimaryDark.color }}>Capacidade: {rows * cols} slots ({rows} x {cols})</Text>
+                <Text style={{ padding: 5, borderRadius: 4, backgroundColor: Colors.lightGreen.color, color: Colors.colorPrimaryDark.color }}>Capacidade: {rows * cols} slots ({rows} x {cols})</Text>
             </View>
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>

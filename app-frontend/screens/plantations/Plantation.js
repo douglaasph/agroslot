@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 import ThemedStyles, { Colors } from "../../styles/stylesheets";
 import Popup from "../../components/Modal";
 import { useEffect, useState } from "react";
@@ -39,7 +39,7 @@ export default function Plantation({ navigation, route }) {
         if (!res.success) {
             alert('Erro ao excluir plantação.');
         } else {
-            alert('Plantação excluída com sucesso!');
+            Alert.alert("Sucesso", "Plantação excluída com sucesso!", { cancelable: true })
             navigation.reset({
                 index: 0,
                 routes: [{ name: 'Home' }]
@@ -66,6 +66,8 @@ export default function Plantation({ navigation, route }) {
                 <BasicButton onPress={() => setPopupVisible(true)} title={"Editar"} />
                 <BasicButton onPress={() => setPopupDeleteVisible(true)} title={"Deletar"} color={Colors.colorDanger.color} />
             </View>
+
+            <Text style={{ color: Colors.colorDanger.color, display: fetchError ? 'flex' : 'none' }}>{fetchError}</Text>
 
             <Popup
                 visible={popupVisible}

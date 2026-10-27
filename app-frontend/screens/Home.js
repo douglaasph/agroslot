@@ -78,9 +78,9 @@ export default function HomeScreen({ navigation }) {
         </Pressable>
 
       </LinearGradient >
-      <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', width: '100%', paddingVertical: 10 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%', padding: 10 }}>
         <Text style={{ fontSize: 18, fontWeight: '400', textAlign: 'center' }}>Minhas Plantações</Text>
-        <BasicButton onPress={() => setPopupVisible(true)} title={"+ Nova Plantação"} />
+        <BasicButton onPress={() => setPopupVisible(true)} title={"+ Nova Plantação"} fontSize={14} />
       </View>
 
       {!fetchError ?
@@ -99,7 +99,7 @@ export default function HomeScreen({ navigation }) {
             gap: 10
           }}>
           {plantations?.map((p) => (
-            <BasicCard style={{ width: '100%' }}>
+            <BasicCard key={p.id} style={{ width: '100%' }}>
               <Pressable style={{ flex: 1, gap: 8 }} onPress={() => navigation.navigate('Plantação', { rawPlantation: p })}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                   <View>

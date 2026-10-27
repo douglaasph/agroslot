@@ -56,7 +56,7 @@ export function NumericInput({
     const handleChange = (text) => {
         const sanitized = text.replace(/[^0-9]/g, "");
         const normalized = sanitized.replace(/^0+(?=\d)/, "");
-        onChangeValue(normalized);
+        onChangeValue(normalized === "" ? "" : Number(normalized));
     };
 
     return (
@@ -82,8 +82,8 @@ export function NumericInput({
                     backgroundColor: '#FFFFFF',
                 }}
                 placeholderTextColor={Colors.colorSoilLight.color}
-                placeholder={placeholder}
-                value={value}
+                placeholder={String(placeholder ?? '')}
+                value={String(value ?? '')}
                 onChangeText={handleChange}
                 keyboardType="numeric"
             />

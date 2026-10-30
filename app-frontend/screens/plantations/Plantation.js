@@ -1,12 +1,12 @@
-import { StatusBar } from "expo-status-bar";
-import { Alert, Pressable, ScrollView, Text, View } from "react-native";
-import ThemedStyles, { Colors } from "../../styles/stylesheets";
-import Popup from "../../components/Modal";
-import { useEffect, useState } from "react";
-import BasicButton from "../../components/BasicButton";
 import { Ionicons } from "@expo/vector-icons";
+import { StatusBar } from "expo-status-bar";
+import { useEffect, useState } from "react";
+import { Alert, Pressable, Text, View } from "react-native";
+import BasicButton from "../../components/BasicButton";
 import CreatePlantationForm from "../../components/CreatePlantationForm";
+import Popup from "../../components/Modal";
 import { deletePlantation, getPlantation } from "../../services/plantation";
+import ThemedStyles, { Colors } from "../../styles/stylesheets";
 
 export default function Plantation({ navigation, route }) {
     const { rawPlantation } = route.params;
@@ -55,7 +55,7 @@ export default function Plantation({ navigation, route }) {
         if (!res.success) {
             alert('Erro ao excluir plantação.');
         } else {
-            Alert.alert("Sucesso", "Plantação excluída com sucesso!", { cancelable: true })
+            Alert.alert("Sucesso", "Plantação excluída com sucesso!");
             navigation.reset({
                 index: 0,
                 routes: [{ name: 'Home' }]

@@ -1,7 +1,11 @@
 import { apiDelete, apiFetch, apiPost, apiPut } from "./api";
 
-export async function createPlantation({ nome, colunas, linhas, capacidade }) {
-    const res = await apiPost('/plantation', { nome, colunas, linhas, capacidade });
+export async function createPlantation({ nome, colunas, linhas }) {
+    const res = await apiPost('/plantation',{ 
+        nome, 
+        colunas, 
+        linhas
+    });
 
     if (!res.ok) {
         const data = await res.json();
@@ -40,8 +44,11 @@ export async function getPlantation({ plantationId }) {
     return { error: '', success: true, plantation: data }
 }
 
-export async function editPlantation({ nome, linhas, colunas, capacidade, plantationId }) {
-    const res = await apiPut(`/plantation/${plantationId}`, { nome, linhas, colunas, capacidade });
+export async function editPlantation({ nome, linhas, colunas, plantationId }) {
+    const res = await apiPut(`/plantation/${plantationId}`,{ 
+        nome, 
+        linhas, 
+        colunas});
 
     if (!res.ok) {
         const data = await res.json();

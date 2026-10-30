@@ -1,15 +1,12 @@
-import { StatusBar } from "expo-status-bar";
-import { Alert, Pressable, ScrollView, Text, View } from "react-native";
-import ThemedStyles, { Colors } from "../../styles/stylesheets";
-import Popup from "../../components/Modal";
-import { useEffect, useState } from "react";
-import BasicButton from "../../components/BasicButton";
-import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
+import { StatusBar } from "expo-status-bar";
+import { useEffect, useState } from "react";
+import { Alert, Pressable, Text, View } from "react-native";
+import BasicButton from "../../components/BasicButton";
 import CreatePlantationForm from "../../components/CreatePlantationForm";
+import Popup from "../../components/Modal";
 import { deletePlantation, getPlantation } from "../../services/plantation";
-import BasicCard from "../../components/BasicCard";
-import LineProgress from "../../components/LineProgress";
+import ThemedStyles, { Colors } from "../../styles/stylesheets";
 
 export default function Plantation({ navigation, route }) {
     const { rawPlantation } = route.params;
@@ -19,6 +16,25 @@ export default function Plantation({ navigation, route }) {
     // plantations
     const [plantation, setPlantation] = useState(null);
     const [fetchError, setFetchError] = useState(false);
+    // mock for a 3 row 5 col plantation
+    const [plants, setPlants] = useState([{ 'id': 1, 'nome': 'planta1', 'especie_planta': 'SOJA', 'posicao_x': 1, 'posicao_y': 1, 'available': false, status: 'healthy' },
+    { 'id': 2, 'nome': 'planta2', 'especie_planta': 'SOJA', 'posicao_x': 1, 'posicao_y': 2, 'available': false, status: 'attention' },
+    { 'id': 7, 'nome': '', 'especie_planta': '', 'posicao_x': 1, 'posicao_y': 4, 'available': true },
+    { 'id': 8, 'nome': '', 'especie_planta': '', 'posicao_x': 1, 'posicao_y': 5, 'available': true },
+    { 'id': 3, 'nome': '', 'especie_planta': '', 'posicao_x': 1, 'posicao_y': 3, 'available': true },
+
+    { 'id': 4, 'nome': 'planta3', 'especie_planta': 'SOJA', 'posicao_x': 3, 'posicao_y': 1, 'available': false, status: 'danger' },
+    { 'id': 5, 'nome': '', 'especie_planta': '', 'posicao_x': 3, 'posicao_y': 2, 'available': true },
+    { 'id': 6, 'nome': 'planta4', 'especie_planta': 'SOJA', 'posicao_x': 3, 'posicao_y': 3, 'available': false, status: 'attention' },
+    { 'id': 9, 'nome': '', 'especie_planta': '', 'posicao_x': 3, 'posicao_y': 4, 'available': true },
+    { 'id': 10, 'nome': '', 'especie_planta': '', 'posicao_x': 3, 'posicao_y': 5, 'available': true },
+
+    { 'id': 1, 'nome': 'planta1', 'especie_planta': 'SOJA', 'posicao_x': 2, 'posicao_y': 1, 'available': false, status: 'healthy' },
+    { 'id': 2, 'nome': 'planta2', 'especie_planta': 'SOJA', 'posicao_x': 2, 'posicao_y': 2, 'available': false, status: 'attention' },
+    { 'id': 7, 'nome': '', 'especie_planta': '', 'posicao_x': 2, 'posicao_y': 4, 'available': true },
+    { 'id': 8, 'nome': '', 'especie_planta': '', 'posicao_x': 2, 'posicao_y': 5, 'available': true },
+    { 'id': 3, 'nome': '', 'especie_planta': '', 'posicao_x': 2, 'posicao_y': 3, 'available': true },
+    ]);
 
     async function tryGetPlantation() {
         const res = await getPlantation({ plantationId: plantation.id });
@@ -39,7 +55,7 @@ export default function Plantation({ navigation, route }) {
         if (!res.success) {
             alert('Erro ao excluir plantação.');
         } else {
-            Alert.alert("Sucesso", "Plantação excluída com sucesso!", { cancelable: true })
+            Alert.alert("Sucesso", "Plantação excluída com sucesso!");
             navigation.reset({
                 index: 0,
                 routes: [{ name: 'Home' }]
@@ -65,6 +81,49 @@ export default function Plantation({ navigation, route }) {
                 <Text style={{ fontSize: 18, fontWeight: '400', textAlign: 'center' }}>Minhas Plantas</Text>
                 <BasicButton onPress={() => setPopupVisible(true)} title={"Editar"} />
                 <BasicButton onPress={() => setPopupDeleteVisible(true)} title={"Deletar"} color={Colors.colorDanger.color} />
+            </View>
+
+            <View style={{
+                backgroundColor: Colors.colorPrimaryDark.color, width: '90%', maxHeight: '50%', height: rawPlantation?.linhas * 70 + 60, borderRadius: 10, alignItems: 'center', padding: 10
+            }}>
+                <View style={{
+                    backgroundColor: Colors.colorSoil.color, width: '100%', height: '100%', borderRadius: 10, padding: 5
+                }}>
+                    <View style={{
+                        borderRadius: 6,
+                        backgroundColor: Colors.brownBorder.color, padding: 3, flex: 1
+                    }}>
+                        <View style={{
+                            backgroundColor: Colors.colorGrass.color, borderRadius: 6,
+                            borderColor: Colors.colorSoil.color, borderWidth: 5, flex: 1, padding: 10,
+                        }}>
+                            <ScrollView style={{ flex: 1 }} nestedScrollEnabled={true}>
+                                <ScrollView horizontal={true} nestedScrollEnabled={true} showsHorizontalScrollIndicator={true}>
+                                    <View style={{
+                                        flexDirection: 'column', gap: 5
+                                    }}>
+                                        {Array.from({ length: rawPlantation?.linhas }, (_, index) => (
+                                            <View
+                                                key={index}
+                                                style={{
+                                                    flexDirection: 'row',
+                                                    gap: 5,
+                                                    justifyContent: 'center',
+                                                    paddingBottom: 5
+                                                }}
+                                            >
+                                                {plants?.filter((p) => p.posicao_x === index + 1).map((p) => (
+                                                    <PlantSlot key={p.id} available={p.available} status={p.status} onPress={() => alert(p.nome)} />
+                                                ))}
+                                            </View>
+                                        ))}
+                                    </View>
+                                </ScrollView>
+                            </ScrollView>
+                        </View>
+                    </View>
+                </View>
+
             </View>
 
             <Text style={{ color: Colors.colorDanger.color, display: fetchError ? 'flex' : 'none' }}>{fetchError}</Text>
@@ -97,4 +156,31 @@ export default function Plantation({ navigation, route }) {
             <StatusBar style="auto" />
         </View >
     );
+}
+
+export function PlantSlot({ available, status, onPress }) {
+    let color = Colors.colorHealthy.color;
+
+    switch (status) {
+        case 'danger':
+            color = Colors.colorDanger.color;
+        case 'attention':
+            color = 'orange'
+    }
+
+    return (
+        <Pressable
+            onPress={onPress}
+            style={{
+                backgroundColor: Colors.colorSoil.color,
+                padding: 10, borderRadius: 15,
+                shadowOffset: { width: 1, height: 2 }, shadowColor: 'black', shadowOpacity: 0.3
+            }}
+        >
+            {available ?
+                <Ionicons name="add" size={32} color={Colors.brownBorder.color} /> :
+                <Ionicons name="leaf" size={32} color={color} />
+            }
+        </Pressable>
+    )
 }

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import Input, { NumericInput } from "./BasicInput";
-import BasicButton from "./BasicButton";
-import { Alert, Text, TextInput, View } from "react-native";
-import { Colors } from "../styles/stylesheets";
+import { Alert, Text, View } from "react-native";
 import { createPlantation, editPlantation } from "../services/plantation";
+import { Colors } from "../styles/stylesheets";
+import BasicButton from "./BasicButton";
+import Input, { NumericInput } from "./BasicInput";
 
 export default function CreatePlantationForm({ onCancel, onCreate, edit = false, originalPlantation = null }) {
     const [nomePlantacao, setNomePlantacao] = useState('');
@@ -28,7 +28,6 @@ export default function CreatePlantationForm({ onCancel, onCreate, edit = false,
         Alert.alert(
             title = title,
             message = message,
-            { cancelable: cancel }
         );
     };
 
@@ -41,9 +40,12 @@ export default function CreatePlantationForm({ onCancel, onCreate, edit = false,
         setSubmitErrorMessage('');
 
         async function tryCreatePlantation({ nome, rows, cols }) {
-            const res = await createPlantation({ nome: nome, colunas: cols, linhas: rows, capacidade: rows * cols });
+            const res = await createPlantation({
+                nome,
+                colunas: cols,
+                linhas: rows});
 
-            if (!res) {
+            if (!res.success) {
                 setSubmitErrorMessage(res.error);
                 setSubmitError(true);
             } else {
@@ -65,9 +67,13 @@ export default function CreatePlantationForm({ onCancel, onCreate, edit = false,
         setSubmitErrorMessage('');
 
         async function tryEditPlantation({ nome, rows, cols, plantationId }) {
-            const res = await editPlantation({ nome: nome, colunas: cols, linhas: rows, capacidade: rows * cols, plantationId });
+            const res = await editPlantation({
+                nome: nome,
+                colunas: cols,
+                linhas: rows,
+                plantationId});
 
-            if (!res) {
+            if (!res.success) {
                 setSubmitErrorMessage(res.error);
                 setSubmitError(true);
             } else {

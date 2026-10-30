@@ -23,17 +23,41 @@ public class PlantationService {
         this.userService = userService;
     }
 
-    public Plantation create(String nome, Integer capacidade, Integer colunas, Integer linhas, String userId) {
+    public Plantation create(
+        String nome, 
+        Integer colunas, 
+        Integer linhas, 
+        String userId) {
+
         Plantation plantation = new Plantation();
         plantation.setNome(nome);
-        plantation.setCapacidade(capacidade);
         plantation.setColunas(colunas);
         plantation.setLinhas(linhas);
+        plantation.setCapacidade(calcularCapacidade(linhas, colunas));
         plantation.setUsuario(
                 userService.findUserById(userId));
 
         return plantationRepository.save(plantation);
+
+        
     }
+
+    private Integer calcularCapacidade(Integer linhas, Integer colunas) {
+    if (linhas == null || colunas == null
+            || linhas <= 0 || colunas <= 0) {
+        throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Linhas e colunas devem ser maiores que zero.");
+    }
+
+    try {
+        return Math.multiplyExact(linhas, colunas);
+    } catch (ArithmeticException exception) {
+        throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "A capacidade calculada excede o limite permitido.");
+    }
+}
 
     public List<Plantation> findAllByUser(String userId) {
         return plantationRepository.findByUsuarioId(Integer.parseInt(userId));
@@ -45,29 +69,33 @@ public class PlantationService {
 
     @Transactional
     public Plantation update(
-            Integer plantationId,
-            String userId,
-            String nome,
-            Integer capacidade,
-            Integer colunas,
-            Integer linhas) {
-        Plantation plantation = findOwnedPlantation(plantationId, userId);
+        Integer plantationId,
+        String userId,
+        String nome,
+        Integer colunas,
+        Integer linhas) {
 
-        if (nome != null && !nome.isBlank()) {
-            plantation.setNome(nome.trim());
-        }
-        if (capacidade != null) {
-            plantation.setCapacidade(capacidade);
-        }
-        if (colunas != null) {
-            plantation.setColunas(colunas);
-        }
-        if (linhas != null) {
-            plantation.setLinhas(linhas);
-        }
+    Plantation plantation = findOwnedPlantation(plantationId, userId);
 
-        return plantationRepository.save(plantation);
+    if (nome != null && !nome.isBlank()) {
+        plantation.setNome(nome.trim());
     }
+
+    if (colunas != null) {
+        plantation.setColunas(colunas);
+    }
+
+    if (linhas != null) {
+        plantation.setLinhas(linhas);
+    }
+
+    plantation.setCapacidade(
+            calcularCapacidade(
+                    plantation.getLinhas(),
+                    plantation.getColunas()));
+
+    return plantationRepository.save(plantation);
+}
 
     @Transactional
     public void delete(Integer plantationId, String userId) {

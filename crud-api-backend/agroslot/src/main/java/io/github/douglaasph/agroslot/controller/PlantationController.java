@@ -37,8 +37,12 @@ public class PlantationController {
     public ResponseEntity<PlantationResponse> create(
             @RequestBody @Valid CreatePlantationRequest req,
             Authentication authentication) {
+                
         Plantation created = plantationService.create(
-                req.getNome(), req.getCapacidade(), req.getColunas(), req.getLinhas(), authentication.getName());
+                req.getNome(), 
+                req.getColunas(), 
+                req.getLinhas(), 
+                authentication.getName());
 
         URI location = URI.create("/plantation/" + created.getId());
         return ResponseEntity.created(location).body(PlantationResponse.from(created));
@@ -71,7 +75,7 @@ public class PlantationController {
 
         return ResponseEntity.ok(response);
     }
-
+    
     @PutMapping("/{id}")
     public ResponseEntity<PlantationResponse> update(
             @PathVariable Integer id,
@@ -81,7 +85,6 @@ public class PlantationController {
                 id,
                 authentication.getName(),
                 req.getNome(),
-                req.getCapacidade(),
                 req.getColunas(),
                 req.getLinhas());
 

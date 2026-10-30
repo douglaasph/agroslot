@@ -18,9 +18,6 @@ public class UpdatePlantationRequest {
     @Size(min = 1, message = "O nome não pode ser vazio")
     private String nome;
 
-    @Positive(message = "A capacidade deve ser maior que zero")
-    private Integer capacidade;
-
     @Positive(message = "A quantidade de colunas deve ser maior que zero")
     private Integer colunas;
 
@@ -31,7 +28,6 @@ public class UpdatePlantationRequest {
     @AssertTrue(message = "Envie ao menos um campo para atualizar")
     public boolean isAtLeastOneFieldPresent() {
         return (nome != null && !nome.isBlank())
-                || capacidade != null
                 || colunas != null
                 || linhas != null;
     }

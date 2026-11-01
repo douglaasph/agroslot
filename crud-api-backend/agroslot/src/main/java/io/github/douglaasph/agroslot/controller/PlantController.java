@@ -3,6 +3,7 @@ package io.github.douglaasph.agroslot.controller;
 import java.net.URI;
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -16,13 +17,10 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping({ "/plant" })
+@RequiredArgsConstructor
 public class PlantController {
 
     private final PlantService plantService;
-
-    public PlantController(PlantService plantService) {
-        this.plantService = plantService;
-    }
 
     @PostMapping()
     public ResponseEntity<PlantResponse> create(

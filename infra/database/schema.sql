@@ -35,7 +35,7 @@ CREATE TABLE plantas (
 CREATE TABLE historico_planta (
     id                   INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     planta_id            INT NOT NULL,
-    foto                 VARCHAR(500),
+    foto_url                 VARCHAR(500),
     upload_date          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     predicao             VARCHAR(255),
     nivel_saude_predicao REAL,

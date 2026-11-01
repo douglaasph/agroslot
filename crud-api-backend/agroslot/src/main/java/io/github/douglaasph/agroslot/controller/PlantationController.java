@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -26,12 +27,9 @@ import jakarta.validation.Valid;
 
 @RestController()
 @RequestMapping({ "/plantation" })
+@RequiredArgsConstructor
 public class PlantationController {
     private final PlantationService plantationService;
-
-    public PlantationController(PlantationService plantationService) {
-        this.plantationService = plantationService;
-    }
 
     @PostMapping
     public ResponseEntity<PlantationResponse> create(

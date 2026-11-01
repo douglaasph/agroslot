@@ -14,6 +14,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "historico_planta")
@@ -30,10 +31,11 @@ public class PlantHistory {
     @JoinColumn(name = "planta_id", nullable = false)
     private Plant planta;
 
-    @Column(length = 500)
-    private String foto;
+    @Column(name = "foto_url", length = 500)
+    private String fotoUrl;
 
-    @Column(name = "upload_date", nullable = false, insertable = false, updatable = false)
+    @CreationTimestamp
+    @Column(name = "upload_date", nullable = false, updatable = false)
     private LocalDateTime uploadDate;
 
     private String predicao;

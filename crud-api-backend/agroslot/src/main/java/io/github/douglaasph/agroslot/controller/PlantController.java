@@ -3,15 +3,10 @@ package io.github.douglaasph.agroslot.controller;
 import java.net.URI;
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import io.github.douglaasph.agroslot.dto.CreatePlantRequest;
 import io.github.douglaasph.agroslot.dto.PlantResponse;
@@ -20,16 +15,14 @@ import io.github.douglaasph.agroslot.model.Plant;
 import io.github.douglaasph.agroslot.service.PlantService;
 import jakarta.validation.Valid;
 
-@RestController 
+@RestController
+@RequestMapping({ "/plant" })
+@RequiredArgsConstructor
 public class PlantController {
 
     private final PlantService plantService;
 
-    public PlantController(PlantService plantService) {
-        this.plantService = plantService;
-    }
-
-    @PostMapping("/plants")
+    @PostMapping()
     public ResponseEntity<PlantResponse> create(
         @RequestBody @Valid CreatePlantRequest req,
         Authentication authentication) {
@@ -49,7 +42,7 @@ public class PlantController {
                 .body(PlantResponse.from(created));
         }
 
-    @GetMapping("/plantations/{plantationId}/plants")
+    @GetMapping("/{plantationId}")
     public ResponseEntity<List<PlantResponse>> listByPlantation(
         @PathVariable("plantationId") Integer plantacaoId,
         Authentication authentication) {
@@ -66,7 +59,7 @@ public class PlantController {
             
         }
     
-    @PutMapping("/plants/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<PlantResponse> update(
         @PathVariable Integer id,
         @RequestBody @Valid UpdatePlantRequest req, 
@@ -83,7 +76,7 @@ public class PlantController {
         return ResponseEntity.ok(PlantResponse.from(updated));
         }
 
-    @DeleteMapping("plants/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
         @PathVariable Integer id, 
         Authentication authentication) {

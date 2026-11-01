@@ -38,24 +38,6 @@ public class PlantService {
 
         Plantation plantation = findOwnedPlantation(plantacaoId, userId);
 
-        if (especie == null) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "A espécie da planta é obrigatória.");
-        }
-
-        if (nome == null || nome.isBlank()) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "O nome da planta é obrigatório.");
-        }
-
-        if (posicaoX == null || posicaoY == null) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "As posições X e Y são obrigatórias.");
-        }
-
         validatePosition(plantacaoId, posicaoX, posicaoY, null);
 
         Plant plant = new Plant();

@@ -1,4 +1,4 @@
-import { apiFetch, apiPost, apiPut } from "./api";
+import { apiDelete, apiFetch, apiPost, apiPut } from "./api";
 
 export async function getPlantsByPlantationId({plantationId, rows, cols}) {
     const res = await apiFetch(`/plant/${plantationId}`);
@@ -36,10 +36,24 @@ export async function createPlant({ nome, especie, posicao_x, posicao_y, plantac
 export async function editPlant({ nome, especie, posicao_x, posicao_y, planta_id }) {
     const res = await apiPut(`/plant/${planta_id}`,{ 
         nome, 
-        especieplanta: especie,
+        especie: especie,
         posicao_y,
         posicao_x,
     });
+
+    if (!res.ok) {
+        const data = await res.json();
+
+        return { error: data.message || data.error, success: false }
+    }
+
+    const data = await res.json();
+
+    return { error: '', success: true, plant: data }
+}
+
+export async function deletePlant({ plantId }) {
+    const res = await apiDelete(`/plant/${plantId}`);
 
     if (!res.ok) {
         const data = await res.json();

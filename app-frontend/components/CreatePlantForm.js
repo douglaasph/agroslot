@@ -64,7 +64,7 @@ export default function CreatePlant({ onCancel, onCreate, posicao_x, posicao_y, 
                 especie,
                 posicao_x,
                 posicao_y,
-                plant_id
+                planta_id: plant_id
             });
 
             if (!res.success) {
@@ -72,12 +72,12 @@ export default function CreatePlant({ onCancel, onCreate, posicao_x, posicao_y, 
                 setSubmitError(true);
             } else {
                 showAlert({ title: "Sucesso", message: "Planta editada com sucesso!" });
-                onCreate();
+                onCreate(res.plant);
                 onCancel();
             }
         }
 
-        tryEditPlant({ nome: nomePlanta, especie: 'SOJA', posicao_x, posicao_y, plant_id: originalPlant.id });
+      tryEditPlant({ nome: nomePlanta, especie: 'SOJA', posicao_x, posicao_y, plant_id: originalPlant.id });
     }
 
     return (
@@ -99,12 +99,12 @@ export default function CreatePlant({ onCancel, onCreate, posicao_x, posicao_y, 
             />
             <NumericInput
                 label="Posição X"
-                value={posicao_x}
+                value={posicao_x || originalPlant.posicao_x}
                 placeholder={0}
             />
             <NumericInput
                 label="Posição Y"
-                value={posicao_y}
+                value={posicao_y || originalPlant.posicao_y}
                 placeholder={0}
             />
 

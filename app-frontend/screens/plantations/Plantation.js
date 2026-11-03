@@ -98,6 +98,21 @@ export default function Plantation({ navigation, route }) {
                 <BasicButton onPress={() => setPopupVisible(true)} title={"Editar"} />
                 <BasicButton onPress={() => setPopupDeleteVisible(true)} title={"Deletar"} color={Colors.colorDanger.color} />
             </View>
+            
+            <View style={{padding: 15, flexDirection: 'row', alignContent: 'space-between', justifyContent: 'space-between', width: '90%'}}>
+                <View style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
+                    <View style={{backgroundColor: Colors.colorPrimary.color, borderRadius: '50%', width: 15, height: 15}} />
+                    <Text>Saudável</Text>
+                </View> 
+                <View style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
+                    <View style={{backgroundColor: 'orange', borderRadius: '50%', width: 15, height: 15}} />
+                    <Text>Atenção</Text>
+                </View>      
+                <View style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
+                    <View style={{backgroundColor: Colors.colorDanger.color, borderRadius: '50%', width: 15, height: 15}} />
+                    <Text>Perigo</Text>
+                </View>   
+            </View>
 
             <View style={{
                 backgroundColor: Colors.colorPrimaryDark.color, width: '90%', maxHeight: '50%', height: rawPlantation?.linhas * 70 + 60, borderRadius: 10, alignItems: 'center', padding: 10
@@ -129,7 +144,7 @@ export default function Plantation({ navigation, route }) {
                                                 }}
                                             >
                                                 {plants?.filter((p) => p.posicao_x === index + 1).map((p) => (
-                                                    <PlantSlot key={p.id} available={p.available} status={p.status} onPress={() => openCreatePlantForm({p_x: p.posicao_x, p_y: p.posicao_y})} />
+                                                    <PlantSlot key={p.id} available={p.available} status={p.status} onPress={() => p.available ? openCreatePlantForm({p_x: p.posicao_x, p_y: p.posicao_y}) : navigation.navigate('Planta', {'rawPlant': p, 'plantation': plantation, 'onGoBack': (update) => { if (update) getPlants()}})} />
                                                 ))}
                                             </View>
                                         ))}

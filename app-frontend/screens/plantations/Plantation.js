@@ -1,40 +1,33 @@
 import { Ionicons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
-import { Alert, Pressable, Text, View } from "react-native";
+import { Alert, Pressable, Text, View, ScrollView } from "react-native";
 import BasicButton from "../../components/BasicButton";
 import CreatePlantationForm from "../../components/CreatePlantationForm";
+import CreatePlantForm from "../../components/CreatePlantForm";
 import Popup from "../../components/Modal";
 import { deletePlantation, getPlantation } from "../../services/plantation";
 import ThemedStyles, { Colors } from "../../styles/stylesheets";
+import { getPlantsByPlantationId } from "../../services/plant";
 
 export default function Plantation({ navigation, route }) {
     const { rawPlantation } = route.params;
     const styles = ThemedStyles();
     const [popupVisible, setPopupVisible] = useState(false);
     const [popupDeleteVisible, setPopupDeleteVisible] = useState(false);
+    const [popupCreatePlantVisible, setPopupCreatePlantVisible] = useState(false);
+
+    const [refresh, setRefresh] = useState(false);
+
+    const [chosenPosicaoX, setChosenPosicaoX] = useState(null);
+    const [chosenPosicaoY, setChosenPosicaoY] = useState(null);
+    const [plantationId, setPlantationId] = useState(null);
+
     // plantations
     const [plantation, setPlantation] = useState(null);
     const [fetchError, setFetchError] = useState(false);
     // mock for a 3 row 5 col plantation
-    const [plants, setPlants] = useState([{ 'id': 1, 'nome': 'planta1', 'especie_planta': 'SOJA', 'posicao_x': 1, 'posicao_y': 1, 'available': false, status: 'healthy' },
-    { 'id': 2, 'nome': 'planta2', 'especie_planta': 'SOJA', 'posicao_x': 1, 'posicao_y': 2, 'available': false, status: 'attention' },
-    { 'id': 7, 'nome': '', 'especie_planta': '', 'posicao_x': 1, 'posicao_y': 4, 'available': true },
-    { 'id': 8, 'nome': '', 'especie_planta': '', 'posicao_x': 1, 'posicao_y': 5, 'available': true },
-    { 'id': 3, 'nome': '', 'especie_planta': '', 'posicao_x': 1, 'posicao_y': 3, 'available': true },
-
-    { 'id': 4, 'nome': 'planta3', 'especie_planta': 'SOJA', 'posicao_x': 3, 'posicao_y': 1, 'available': false, status: 'danger' },
-    { 'id': 5, 'nome': '', 'especie_planta': '', 'posicao_x': 3, 'posicao_y': 2, 'available': true },
-    { 'id': 6, 'nome': 'planta4', 'especie_planta': 'SOJA', 'posicao_x': 3, 'posicao_y': 3, 'available': false, status: 'attention' },
-    { 'id': 9, 'nome': '', 'especie_planta': '', 'posicao_x': 3, 'posicao_y': 4, 'available': true },
-    { 'id': 10, 'nome': '', 'especie_planta': '', 'posicao_x': 3, 'posicao_y': 5, 'available': true },
-
-    { 'id': 1, 'nome': 'planta1', 'especie_planta': 'SOJA', 'posicao_x': 2, 'posicao_y': 1, 'available': false, status: 'healthy' },
-    { 'id': 2, 'nome': 'planta2', 'especie_planta': 'SOJA', 'posicao_x': 2, 'posicao_y': 2, 'available': false, status: 'attention' },
-    { 'id': 7, 'nome': '', 'especie_planta': '', 'posicao_x': 2, 'posicao_y': 4, 'available': true },
-    { 'id': 8, 'nome': '', 'especie_planta': '', 'posicao_x': 2, 'posicao_y': 5, 'available': true },
-    { 'id': 3, 'nome': '', 'especie_planta': '', 'posicao_x': 2, 'posicao_y': 3, 'available': true },
-    ]);
+    const [plants, setPlants] = useState([]);
 
     async function tryGetPlantation() {
         const res = await getPlantation({ plantationId: plantation.id });
@@ -45,9 +38,25 @@ export default function Plantation({ navigation, route }) {
         }
     }
 
+    async function getPlants() {
+        const res = await getPlantsByPlantationId({ plantationId: rawPlantation.id, rows: rawPlantation.linhas, cols: rawPlantation.colunas });
+        if (!res.success) {
+            setFetchError(true);
+        } else {
+            setPlants(res.plants)
+        }
+    }
+
     useEffect(() => {
         setPlantation(rawPlantation);
+        getPlants();
     }, []);
+
+    useEffect(() => {
+        if (refresh) {
+            getPlants();
+        }
+    }, [refresh])
 
     async function tryDelete() {
         const res = await deletePlantation({ plantationId: plantation.id });
@@ -61,6 +70,13 @@ export default function Plantation({ navigation, route }) {
                 routes: [{ name: 'Home' }]
             });
         }
+    }
+
+    function openCreatePlantForm({p_x, p_y}) {
+        setPlantationId(plantation.id)
+        setChosenPosicaoX(p_x);
+        setChosenPosicaoY(p_y);
+        setPopupCreatePlantVisible(true);
     }
 
     return (
@@ -81,6 +97,21 @@ export default function Plantation({ navigation, route }) {
                 <Text style={{ fontSize: 18, fontWeight: '400', textAlign: 'center' }}>Minhas Plantas</Text>
                 <BasicButton onPress={() => setPopupVisible(true)} title={"Editar"} />
                 <BasicButton onPress={() => setPopupDeleteVisible(true)} title={"Deletar"} color={Colors.colorDanger.color} />
+            </View>
+            
+            <View style={{padding: 15, flexDirection: 'row', alignContent: 'space-between', justifyContent: 'space-between', width: '90%'}}>
+                <View style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
+                    <View style={{backgroundColor: Colors.colorPrimary.color, borderRadius: '50%', width: 15, height: 15}} />
+                    <Text>Saudável</Text>
+                </View> 
+                <View style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
+                    <View style={{backgroundColor: 'orange', borderRadius: '50%', width: 15, height: 15}} />
+                    <Text>Atenção</Text>
+                </View>      
+                <View style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
+                    <View style={{backgroundColor: Colors.colorDanger.color, borderRadius: '50%', width: 15, height: 15}} />
+                    <Text>Perigo</Text>
+                </View>   
             </View>
 
             <View style={{
@@ -113,7 +144,7 @@ export default function Plantation({ navigation, route }) {
                                                 }}
                                             >
                                                 {plants?.filter((p) => p.posicao_x === index + 1).map((p) => (
-                                                    <PlantSlot key={p.id} available={p.available} status={p.status} onPress={() => alert(p.nome)} />
+                                                    <PlantSlot key={p.id} available={p.available} status={p.status} onPress={() => p.available ? openCreatePlantForm({p_x: p.posicao_x, p_y: p.posicao_y}) : navigation.navigate('Planta', {'rawPlant': p, 'plantation': plantation, 'onGoBack': (update) => { if (update) getPlants()}})} />
                                                 ))}
                                             </View>
                                         ))}
@@ -127,6 +158,13 @@ export default function Plantation({ navigation, route }) {
             </View>
 
             <Text style={{ color: Colors.colorDanger.color, display: fetchError ? 'flex' : 'none' }}>{fetchError}</Text>
+
+            <Popup
+                    visible={popupCreatePlantVisible}
+                    onClose={() => setPopupCreatePlantVisible(false)}
+                >
+       <CreatePlantForm onCancel={() => setPopupCreatePlantVisible(false)} plantation_id={plantationId} posicao_x={chosenPosicaoX} posicao_y={chosenPosicaoY} onCreate={() => setRefresh(true)} />
+            </Popup>
 
             <Popup
                 visible={popupVisible}

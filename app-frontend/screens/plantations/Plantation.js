@@ -9,6 +9,7 @@ import Popup from "../../components/Modal";
 import { deletePlantation, getPlantation } from "../../services/plantation";
 import ThemedStyles, { Colors } from "../../styles/stylesheets";
 import { getPlantsByPlantationId } from "../../services/plant";
+import DropdownC from "../../components/Dropdown";
 
 export default function Plantation({ navigation, route }) {
     const { rawPlantation } = route.params;
@@ -143,8 +144,8 @@ export default function Plantation({ navigation, route }) {
                                                     paddingBottom: 5
                                                 }}
                                             >
-                                                {plants?.filter((p) => p.posicao_x === index + 1).map((p) => (
-                                                    <PlantSlot key={p.id} available={p.available} status={p.status} onPress={() => p.available ? openCreatePlantForm({p_x: p.posicao_x, p_y: p.posicao_y}) : navigation.navigate('Planta', {'rawPlant': p, 'plantation': plantation, 'onGoBack': (update) => { if (update) getPlants()}})} />
+                                                {plants?.filter((p) => p.posicaoX === index + 1).map((p) => (
+                                                    <PlantSlot key={p.id} available={p.available} status={p.status} onPress={() => p.available ? openCreatePlantForm({p_x: p.posicaoX, p_y: p.posicaoY}) : navigation.navigate('Planta', {'rawPlant': p, 'plantation': plantation, 'onGoBack': (update) => { if (update) getPlants()}})} />
                                                 ))}
                                             </View>
                                         ))}

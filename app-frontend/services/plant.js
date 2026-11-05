@@ -15,13 +15,13 @@ export async function getPlantsByPlantationId({plantationId, rows, cols}) {
     return { error: '', success: true, plants: formattedPlants }
 }
 
-export async function createPlant({ nome, especie, posicao_x, posicao_y, plantacao_id }) {
+export async function createPlant({ nome, especie, posicaoX, posicaoY, plantacaoId }) {
     const res = await apiPost('/plant',{ 
         nome, 
         especie,
-        posicaoX: posicao_x,
-        posicaoY: posicao_y,
-        plantacaoId: plantacao_id
+        posicaoX,
+        posicaoY,
+        plantacaoId
     });
 
     if (!res.ok) {
@@ -33,12 +33,12 @@ export async function createPlant({ nome, especie, posicao_x, posicao_y, plantac
     return { error: '', success: true }
 }
 
-export async function editPlant({ nome, especie, posicao_x, posicao_y, planta_id }) {
+export async function editPlant({ nome, especie, posicaoX, posicaoY, planta_id }) {
     const res = await apiPut(`/plant/${planta_id}`,{ 
         nome, 
-        especie: especie,
-        posicao_y,
-        posicao_x,
+        especie,
+        posicaoX,
+        posicaoY
     });
 
     if (!res.ok) {
@@ -83,8 +83,8 @@ function formatPlants({plants, capacidadeX, capacidadeY}) {
           id: plant.id,
           nome: plant.nome,
           especie_planta: plant.especie,
-          posicao_x: plant.posicaoX,
-          posicao_y: plant.posicaoY,
+          posicaoX: plant.posicaoX,
+          posicaoY: plant.posicaoY,
           available: false,
           status: 'healthy'
         });
@@ -93,8 +93,8 @@ function formatPlants({plants, capacidadeX, capacidadeY}) {
           id: `nullx${x}y${y}`,
           nome: '',
           especie_planta: '',
-          posicao_x: x,
-          posicao_y: y,
+          posicaoX: x,
+          posicaoY: y,
           available: true
         });
       }

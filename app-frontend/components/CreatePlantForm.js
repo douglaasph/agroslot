@@ -4,6 +4,7 @@ import { createPlant, editPlant } from "../services/plant";
 import { Colors } from "../styles/stylesheets";
 import BasicButton from "./BasicButton";
 import Input, { NumericInput } from "./BasicInput";
+import { Dropdown } from 'react-native-element-dropdown';
 
 export default function CreatePlant({ onCancel, onCreate, posicao_x, posicao_y, plantation_id, edit = false, originalPlant = null }) {
     const [nomePlanta, setNomePlanta] = useState('');
@@ -12,9 +13,20 @@ export default function CreatePlant({ onCancel, onCreate, posicao_x, posicao_y, 
     const [submitError, setSubmitError] = useState(false);
     const [submitErrorMessage, setSubmitErrorMessage] = useState('');
 
+    const [posicaoX, setPosicaoX] = useState(posicao_x || 0);
+    const [posicaoY, setPosicaoY] = useState(posicao_y || 0);
+
+    const categorias = [
+        { label: 'Soja', value: 'SOJA' }
+    ];
+    const [categoria, setCategoria] = useState('');
+
     useEffect(() => {
         if (edit && originalPlant) {
             setNomePlanta(originalPlant.nome ?? '');
+            setPosicaoX(originalPlant.posicaoX);
+            setPosicaoY(originalPlant.posicaoY);
+            setCategoria(originalPlant.especie_planta);
         }
     }, [edit, originalPlant]);
 
@@ -31,13 +43,13 @@ export default function CreatePlant({ onCancel, onCreate, posicao_x, posicao_y, 
         setSubmitError(false);
         setSubmitErrorMessage('');
 
-        async function tryCreatePlant({ nome, posicao_x, posicao_y, especie }) {
+        async function tryCreatePlant({ nome, posicaoX, posicaoY, especie }) {
             const res = await createPlant({
                 nome,
-                posicao_x,
-                posicao_y,
+                posicaoX,
+                posicaoY,
                 especie,
-                plantacao_id: plantation_id });
+                plantacaoId: plantation_id });
 
             if (!res.success) {
                 setSubmitErrorMessage(res.error);
@@ -49,7 +61,7 @@ export default function CreatePlant({ onCancel, onCreate, posicao_x, posicao_y, 
             }
         }
 
-        tryCreatePlant({ nome: nomePlanta, especie: 'SOJA', posicao_x, posicao_y });
+        tryCreatePlant({ nome: nomePlanta, especie: 'SOJA', posicaoX, posicaoY });
     }
 
     function handleSaveChanges() {
@@ -58,12 +70,12 @@ export default function CreatePlant({ onCancel, onCreate, posicao_x, posicao_y, 
         setSubmitError(false);
         setSubmitErrorMessage('');
 
-        async function tryEditPlant({ nome, especie, posicao_x, posicao_y, plant_id }) {
+        async function tryEditPlant({ nome, especie, posicaoX, posicaoY, plant_id }) {
             const res = await editPlant({
                 nome: nome,
                 especie,
-                posicao_x,
-                posicao_y,
+                posicaoX,
+                posicaoY,
                 planta_id: plant_id
             });
 
@@ -77,7 +89,7 @@ export default function CreatePlant({ onCancel, onCreate, posicao_x, posicao_y, 
             }
         }
 
-      tryEditPlant({ nome: nomePlanta, especie: 'SOJA', posicao_x, posicao_y, plant_id: originalPlant.id });
+      tryEditPlant({ nome: nomePlanta, especie: 'SOJA', posicaoX, posicaoY, plant_id: originalPlant.id });
     }
 
     return (
@@ -92,25 +104,47 @@ export default function CreatePlant({ onCancel, onCreate, posicao_x, posicao_y, 
                 error={nomeError}
                 errorMessage="Nome inválido"
             />
-            <Input
-                label="Espécie"
-                placeholder="Ex.: Soja"
-                value={"SOJA"}
+            <Text style={{
+                fontSize: 14,
+                fontWeight: '600',
+                color: Colors.colorPrimary.color,
+            }}>Espécie</Text>
+            <Dropdown
+                style={{
+                    height: 60,
+                    borderWidth: 1,
+                    borderColor: Colors.colorSoilLight.color,
+                    borderRadius: 8,
+                    paddingHorizontal: 12,
+                    fontSize: 16,
+                    color: Colors.colorPrimaryDark.color,
+                    backgroundColor: '#FFFFFF',
+                }}
+                data={categorias}
+                labelField="label"
+                valueField="value"
+                placeholder="Selecione uma espécie"
+                value={categoria}
+                onChange={item => setCategoria(item.value)}
+                maxHeight={250}
+                activeColor="#E8F5E9"
             />
             <NumericInput
                 label="Posição X"
-                value={posicao_x || originalPlant.posicao_x}
+                value={posicaoX}
+                onChangeValue={setPosicaoX}
                 placeholder={0}
             />
             <NumericInput
                 label="Posição Y"
-                value={posicao_y || originalPlant.posicao_y}
+                value={posicaoY}
+                onChangeValue={setPosicaoY}
                 placeholder={0}
             />
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
                 <BasicButton title="Cancelar" onPress={onCancel} color={Colors.softGray.color} />
-                <BasicButton disabled={nomePlanta.length < 2} title={edit ? 'Salvar' : "Criar Planta"} onPress={edit ? handleSaveChanges : handleSubmit} />
+                <BasicButton disabled={nomePlanta.length < 2 || posicaoX < 1 || posicaoY < 1 || categoria == ''} title={edit ? 'Salvar' : "Criar Planta"} onPress={edit ? handleSaveChanges : handleSubmit} />
             </View>
 
             <Text style={{ color: Colors.colorDanger.color, display: submitError ? 'flex' : 'none' }}>{submitErrorMessage}</Text>

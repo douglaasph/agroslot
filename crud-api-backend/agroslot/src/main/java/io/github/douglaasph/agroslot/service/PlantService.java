@@ -38,6 +38,8 @@ public class PlantService {
 
         Plantation plantation = findOwnedPlantation(plantacaoId, userId);
 
+        validatePositionInBounds(plantation.getLinhas(), plantation.getColunas(), posicaoX, posicaoY);
+
         validatePosition(plantacaoId, posicaoX, posicaoY, null);
 
         Plant plant = new Plant();
@@ -82,6 +84,10 @@ public class PlantService {
 
         Integer novaPosicaoY = posicaoY != null
                 ? posicaoY : plant.getPosicaoY();
+
+        Plantation plantation = plant.getPlantacao();
+
+        validatePositionInBounds(plantation.getLinhas(), plantation.getColunas(), novaPosicaoX, novaPosicaoY);
 
         validatePosition(
                 plant.getPlantacao().getId(),
@@ -167,6 +173,23 @@ public class PlantService {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
                     "Já existe uma planta nessa posição da plantação.");
+        }
+    }
+
+    private void validatePositionInBounds(
+        Integer plantationRows,
+        Integer plantationCols,
+        Integer positionX,
+        Integer positionY
+    ) {
+        if (positionX > plantationRows) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                    "A planta não pode ficar numa posição X maior do que a sua quantidade de linhas.");
+        } else if (positionY > plantationCols) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                    "A planta não pode ficar numa posição Y maior do que a sua quantidade de colunas.");
         }
     }
 

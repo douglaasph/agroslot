@@ -23,14 +23,27 @@ export default function Plant({ navigation, route }) {
 
     const [plant, setPlant] = useState(null);
     const [fetchError, setFetchError] = useState(false);
+    const [currentX, setCurrentX] = useState(0);
+    const [currentY, setCurrentY] = useState(0);
 
     const [historico, setHistorico] = useState([{'id': 1,'title': 'Saudável', 'date': '2026-07-10', 'confidence': 0.97},
-        {'id': 1,'title': 'Ferrugem Asiática', 'date': '2026-10-13', 'confidence': 0.84}
+        {'id': 2,'title': 'Ferrugem Asiática', 'date': '2026-10-13', 'confidence': 0.84}
     ]);
 
     useEffect(() => {
         setPlant(rawPlant);
     }, []);
+
+    useEffect(() => {
+        if (plant?.posicaoX && plant.posicaoX !== currentX) {
+            setCurrentX(plant.posicaoX);
+        }
+
+        if (plant?.posicaoY && plant.posicaoY !== currentY) {
+            setCurrentY(plant.posicaoY);
+        }
+
+    }, [plant])
 
     async function tryDelete() {
         const res = await deletePlant({ plantId: plant.id });
@@ -76,7 +89,7 @@ export default function Plant({ navigation, route }) {
                     </Pressable>
                     <View style={{ flexDirection: 'column' }}>
                         <Text style={{ fontSize: 18, color: Colors.colorPrimary.color, fontWeight: '500' }}>{plant?.nome}</Text>
-                        <Text style={{ color: Colors.softGray.color }}>{plantation?.nome} - Slot ({plant?.posicao_x}, {plant?.posicao_x})</Text>
+                        <Text style={{ color: Colors.softGray.color }}>{plantation?.nome} - Slot ({currentX ? currentX : '...'}, {currentY ? currentY : '...'})</Text>
                     </View>
                 </View>
             </View>
@@ -97,32 +110,30 @@ export default function Plant({ navigation, route }) {
                             <Text style={[getStyle({status: plant?.status, icon: false}), {padding: 5, borderRadius: '5%'}]}>{plant?.status || 'Saudável'}</Text>
                         </View>
                         <Text style={{color: Colors.softGray.color}}>Cadastrada em: {plant?.created || '...'}</Text>
-                        <Text style={{color: Colors.softGray.color}}>Posição: linha {plant?.posicao_x} coluna {plant?.posicao_y}</Text>
+                        <Text style={{color: Colors.softGray.color}}>Posição: linha {currentX ? currentX : '...'} coluna {currentY ? currentY : '...'}</Text>
                     </View>
                 </BasicCard>
                 
                 <BasicButton onPress={() => alert('coming!!')} title={"Realizar Diagnóstico"} />
             </View>
 
-            <View style={{ width: '100%', alignItems: 'stretch', padding: 10
+            <View style={{ width: '100%', padding: 10, flex: 1
             }}>
             <Text style={{ fontSize: 18, fontWeight: '400' }}>Histórico de Diagnósticos</Text>
+            
             <ScrollView
                 style={{
                     width: '100%',
-                    alignSelf: 'stretch',
                     flex: 1
                 }}
                 contentContainerStyle={{
-                    flexGrow: 1,
-                    alignItems: 'stretch',
                     paddingTop: 10,
                     paddingBottom: 60,
                     gap: 10
                 }}>
-                {historico?.map((h) => (
+                 {historico?.map((h) => (
                     <HistoryCard title={h.title} key={h.id} date={h.date} confidence={h.confidence} onPress={() => alert('OK')} />
-                ))}  
+                ))} 
                                   
                 </ScrollView>
             </View>
@@ -153,7 +164,7 @@ export default function Plant({ navigation, route }) {
                 </View>
             </Popup>
 
-            <StatusBar style="auto" />
+            <StatusBar style="dark" />
         </View >
     );
 }

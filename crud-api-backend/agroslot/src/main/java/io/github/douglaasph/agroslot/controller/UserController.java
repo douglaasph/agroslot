@@ -6,18 +6,16 @@ import io.github.douglaasph.agroslot.dto.user.GetMeResponse;
 import io.github.douglaasph.agroslot.dto.user.ChangePasswordRequest;
 import io.github.douglaasph.agroslot.service.UserService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
+@RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @PutMapping("password")
     public ResponseEntity<Void> changePassword(

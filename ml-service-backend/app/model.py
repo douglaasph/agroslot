@@ -9,10 +9,10 @@ MODEL_PATH = (
 )
 
 CLASS_NAMES = [
-    "Bacterial_Blight_Crestamento",
-    "Ferrugem_Asiatica",
-    "Mosaico_Virus",
-    "Planta_Saudavel",
+    "BACTERIAL_BLIGHT_CRESTAMENTO",
+    "FERRUGEM_ASIATICA",
+    "MOSAICO_VIRUS",
+    "PLANTA_SAUDAVEL",
 ]
 
 IMAGE_SIZE = (224, 224)

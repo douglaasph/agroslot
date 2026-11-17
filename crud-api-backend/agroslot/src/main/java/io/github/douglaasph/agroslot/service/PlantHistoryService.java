@@ -2,6 +2,8 @@ package io.github.douglaasph.agroslot.service;
 
 import io.github.douglaasph.agroslot.bucket.BucketFile;
 import io.github.douglaasph.agroslot.bucket.BucketService;
+import io.github.douglaasph.agroslot.client.MlServiceClient;
+import io.github.douglaasph.agroslot.client.MlServiceRepresentation;
 import io.github.douglaasph.agroslot.dto.plantationHistory.PlantHistoryResponse;
 import io.github.douglaasph.agroslot.model.Plant;
 import io.github.douglaasph.agroslot.model.PlantHistory;
@@ -24,15 +26,18 @@ public class PlantHistoryService {
     private final PlantHistoryRepository plantHistoryRepository;
     private final PlantRepository plantRepository;
     private final BucketService bucketService;
+    private final MlServiceClient mlServiceClient;
 
     public PlantHistoryService(
             PlantHistoryRepository plantHistoryRepository,
             PlantRepository plantRepository,
-            BucketService bucketService
+            BucketService bucketService,
+            MlServiceClient mlServiceClient
     ) {
         this.plantHistoryRepository = plantHistoryRepository;
         this.plantRepository = plantRepository;
         this.bucketService = bucketService;
+        this.mlServiceClient = mlServiceClient;
     }
 
     public List<PlantHistoryResponse> getAllImages(Integer plantId) {
@@ -48,10 +53,57 @@ public class PlantHistoryService {
 
     @Transactional
     public PlantHistory createHistoryWithImage(Integer plantId, MultipartFile file) {
+        MediaType mediaType = resolveType(file);
+
         Plant plant = plantRepository.findById(plantId)
                 .orElseThrow(() -> new EntityNotFoundException("Planta não encontrada: " + plantId));
 
-        MediaType type = resolveType(file);
+        MlServiceRepresentation resultMlService;
+        try {
+            var responseEntity = mlServiceClient.getPredict(file);
+            resultMlService = responseEntity != null ? responseEntity.getBody() : null;
+
+            if (resultMlService == null) {
+                throw new IllegalStateException("O serviço de Machine Learning retornou uma resposta vazia.");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Falha ao comunicar com o microsserviço de Machine Learning: " + e.getMessage(), e);
+        }
+
+        String s3Key = uploadImageToStorage(file, mediaType);
+
+        PlantHistory history = new PlantHistory();
+        history.setPlanta(plant);
+        history.setFotoUrl(s3Key);
+        history.setNivelSaudePredicao(resultMlService.getConfidencePercentage());
+        history.setPredicao(resultMlService.getPredictedClass());
+        return plantHistoryRepository.save(history);
+    }
+
+    private MediaType resolveType(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("O arquivo de imagem não pode estar vazio.");
+        }
+
+        String contentType = file.getContentType();
+        if (contentType == null || contentType.isBlank()) {
+            throw new IllegalArgumentException("Content-Type do arquivo não informado");
+        }
+
+        MediaType mediaType = MediaType.parseMediaType(contentType);
+
+        if (!MediaType.IMAGE_PNG.isCompatibleWith(mediaType) && !MediaType.IMAGE_JPEG.isCompatibleWith(mediaType)) {
+            throw new IllegalArgumentException("Apenas arquivos de imagem nos formatos PNG ou JPEG são permitidos.");
+        }
+
+        return mediaType;
+    }
+
+    private String extensionFor(MediaType type) {
+        return MediaType.IMAGE_PNG.equals(type) ? ".png" : ".jpg";
+    }
+
+    private String uploadImageToStorage(MultipartFile file, MediaType type) {
         String s3Key = UUID.randomUUID() + extensionFor(type);
 
         try (InputStream is = file.getInputStream()) {
@@ -60,21 +112,6 @@ public class PlantHistoryService {
             throw new UncheckedIOException("Erro ao ler o arquivo enviado", e);
         }
 
-        PlantHistory history = new PlantHistory();
-        history.setPlanta(plant);
-        history.setFotoUrl(s3Key);
-        return plantHistoryRepository.save(history);
-    }
-
-    private MediaType resolveType(MultipartFile file) {
-        String contentType = file.getContentType();
-        if (contentType == null || contentType.isBlank()) {
-            throw new IllegalArgumentException("Content-Type do arquivo não informado");
-        }
-        return MediaType.parseMediaType(contentType);
-    }
-
-    private String extensionFor(MediaType type) {
-        return MediaType.IMAGE_PNG.equals(type) ? ".png" : ".jpg";
+        return s3Key;
     }
 }

@@ -7,17 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.UUID;
 
+import io.github.douglaasph.agroslot.model.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.dao.DataIntegrityViolationException;
-
-import io.github.douglaasph.agroslot.model.EspeciePlanta;
-import io.github.douglaasph.agroslot.model.PlantHistory;
-import io.github.douglaasph.agroslot.model.Plant;
-import io.github.douglaasph.agroslot.model.Plantation;
-import io.github.douglaasph.agroslot.model.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
@@ -62,7 +57,7 @@ class RelacionamentosTest {
     private PlantHistory criarHistorico(Plant p) {
         PlantHistory h = new PlantHistory();
         h.setPlanta(p);
-        h.setPredicao("Saudavel");
+        h.setPredicao(Doencas.PLANTA_SAUDAVEL);
         h.setNivelSaudePredicao(0.95f);
         return historicoRepo.saveAndFlush(h);
     }

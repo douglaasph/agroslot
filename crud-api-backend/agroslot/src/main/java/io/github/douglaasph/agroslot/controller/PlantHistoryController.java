@@ -27,9 +27,13 @@ public class PlantHistoryController {
     ) {
         PlantHistory history = service.createHistoryWithImage(plantId, file);
 
-        PlantHistoryResponse response = new PlantHistoryResponse();
-        response.setId(history.getId());
-        response.setFoto_url(bucketService.getUrl(history.getFotoUrl()));
+        PlantHistoryResponse response = new PlantHistoryResponse(
+                history.getId(),
+                bucketService.getUrl(history.getFotoUrl()),
+                history.getPredicao(),
+                history.getNivelSaudePredicao(),
+                history.getUploadDate()
+        );
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(response);

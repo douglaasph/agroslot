@@ -1,5 +1,6 @@
 package io.github.douglaasph.agroslot.dto.plantationHistory;
 
+import io.github.douglaasph.agroslot.model.Doencas;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 public class PlantHistoryResponse {
     private Integer id;
     private String foto_url;
-    private String predicao;
+    private Doencas predicao;
     private Float nivelSaudePredicao;
     private LocalDateTime uploadDate;
 }

@@ -10,6 +10,7 @@ import { deletePlant } from "../../services/plant";
 import BasicCard from "../../components/BasicCard";
 import LineProgress from "../../components/LineProgress";
 import * as ImagePicker from 'expo-image-picker';
+import { getHistoryByPlantId, sendImageForDiagnosis } from "../../services/planthistory";
 
 export default function Plant({ navigation, route }) {
     const { rawPlant } = route.params;
@@ -21,6 +22,7 @@ export default function Plant({ navigation, route }) {
     const [popupEditPlantVisible, setPopupEditPlantVisible] = useState(false);
 
     const [refresh, setRefresh] = useState(false);
+    const [loadingHistory, setLoadingHistory] = useState(false);
 
     const [plant, setPlant] = useState(null);
     const [fetchError, setFetchError] = useState(false);
@@ -34,8 +36,27 @@ export default function Plant({ navigation, route }) {
     { 'id': 2, 'title': 'Ferrugem Asiática', 'date': '2026-10-13', 'confidence': 0.84 }
     ]);
 
+    const [history, setHistory] = useState([]);
+
+    async function getHistory(plantId) {
+        setLoadingHistory(true);
+        const res = await getHistoryByPlantId({ plantId: plantId });
+
+        setLoadingHistory(false);
+
+        if (!res.success) {
+            setFetchError(true);
+            console.log("deu erro diva")
+        } else {
+            setHistory(res.history);
+            console.log("deu certo diva")
+        }
+
+    }
+
     useEffect(() => {
         setPlant(rawPlant);
+        getHistory(rawPlant.id);
     }, []);
 
     useEffect(() => {
@@ -91,7 +112,7 @@ export default function Plant({ navigation, route }) {
         });
 
         if (!result.canceled) {
-            setImage(result.assets[0].uri);
+            setImage(result.assets[0]);
         }
 
     };
@@ -136,7 +157,7 @@ export default function Plant({ navigation, route }) {
         });
 
         if (!result.canceled) {
-            setImage(result.assets[0].uri);
+            setImage(result.assets[0]);
         }
 
     };
@@ -144,6 +165,22 @@ export default function Plant({ navigation, route }) {
     const closeImagePopup = () => {
         setPopupSelectImageVisible(false);
         setImage(null);
+    };
+
+    async function sendImageForEvaluation() {
+        if (image) {
+            const res = await sendImageForDiagnosis({ plantId: plant.id, image: image });
+
+            if (!res.success) {
+                setFetchError(true);
+            } else {
+                alert('Diagnóstico realizado com sucesso!');
+                closeImagePopup();
+                getHistory(plant.id);
+            }
+        } else {
+            alert("Imagem não selecionada.")
+        }
     }
 
     return (
@@ -201,8 +238,8 @@ export default function Plant({ navigation, route }) {
                         paddingBottom: 60,
                         gap: 10
                     }}>
-                    {historico?.map((h) => (
-                        <HistoryCard title={h.title} key={h.id} date={h.date} confidence={h.confidence} onPress={() => alert('OK')} />
+                    {history?.map((h) => (
+                        <HistoryCard prediction={h.predicao} key={h.id} date={h.uploadDate} confidence={h.nivelSaudePredicao} photoUrl={h.foto_url} onPress={() => navigation.navigate('Diagnóstico de Planta', { plant: plant, plantHistory: h })} />
                     ))}
 
                 </ScrollView>
@@ -257,8 +294,8 @@ export default function Plant({ navigation, route }) {
                     </BasicCard> :
                     <View style={{ flexDirection: 'column', gap: 15, alignItems: 'center' }}>
                         <Text>A imagem foi carregada com sucesso!!</Text>
-                        <Image source={{ uri: image }} style={{ width: 100, height: 100, resizeMode: 'cover', borderRadius: 10 }} />
-                        <BasicButton title="Realizar diagnóstico" />
+                        <Image source={{ uri: image.uri }} style={{ width: 100, height: 100, resizeMode: 'cover', borderRadius: 10 }} />
+                        <BasicButton title="Realizar diagnóstico" onPress={sendImageForEvaluation} />
                     </View>
                 }
             </Popup>
@@ -268,26 +305,36 @@ export default function Plant({ navigation, route }) {
     );
 }
 
-export function HistoryCard({ title, date, confidence, onPress }) {
+export function HistoryCard({ prediction, date, confidence, onPress, photoUrl }) {
+    const formattedDate = new Date(date).toLocaleDateString('pt-BR');
 
     return (
         <Pressable
             onPress={onPress}
         >
             <BasicCard style={{ flexDirection: 'row' }}>
-                <View style={{ width: '15%', backgroundColor: Colors.softGray.color, borderRadius: 15, alignItems: 'center', justifyContent: 'center' }}>
-                    <Ionicons size={34} name="image" />
+                <View style={{ width: '15%', borderRadius: 15, alignItems: 'center', justifyContent: 'center' }}>
+                    {photoUrl ?
+                        <Image source={{ uri: photoUrl }} style={{ width: '100%', height: 40, overflow: 'hidden' }} resizeMode="cover" />
+                        : <Ionicons size={34} name="image" />}
                 </View>
                 <View style={{ flexGrow: 2 }}>
-                    <Text style={{ fontSize: 16 }}>{title || '...'}</Text>
-                    <Text style={{ color: Colors.softGray.color, fontSize: 14 }}>{date || '...'}</Text>
+                    <Text style={{ fontSize: 16 }}>{prediction ? formatPrediction({ prediction }) : '...'}</Text>
+                    <Text style={{ color: Colors.softGray.color, fontSize: 14 }}>{formattedDate || '...'}</Text>
                 </View>
                 <View style={{ flexGrow: 1, flexDirection: 'column' }}>
-                    <Text style={{ textAlign: 'right' }}>{confidence * 100 || '...'}%</Text>
+                    <Text style={{ textAlign: 'right' }}>{confidence || '...'}%</Text>
                     <Text style={{ color: Colors.softGray.color, fontSize: 14, textAlign: 'right' }}>confiança</Text>
-                    <LineProgress max={100} current={confidence * 100} />
+                    <LineProgress max={100} current={confidence} />
                 </View>
             </BasicCard>
         </Pressable>
     )
+}
+
+export function formatPrediction({ prediction }) {
+    return prediction
+        .replace(/_/g, ' ')
+        .toLowerCase()
+        .replace(/\b\w/g, (char) => char.toUpperCase());
 }

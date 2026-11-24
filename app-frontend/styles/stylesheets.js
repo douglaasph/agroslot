@@ -174,6 +174,9 @@ export const Colors = {
   whiteBackground: {
     backgroundColor: '#ffffff',
   },
+  white: {
+    color: '#ffffff'
+  },
   textColor: {
     color: '#1e2d1a',
   },

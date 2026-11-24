@@ -1,10 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
-import { Alert, Pressable, Text, View, ScrollView, Linking, Image } from "react-native";
+import { Alert, Pressable, Text, View, ScrollView, Linking, Image, ActivityIndicator } from "react-native";
 import BasicButton from "../../components/BasicButton";
 import CreatePlantForm from "../../components/CreatePlantForm";
-import Popup from "../../components/Modal";
+import Popup, { ModalContainer } from "../../components/Modal";
 import ThemedStyles, { Colors } from "../../styles/stylesheets";
 import { deletePlant } from "../../services/plant";
 import BasicCard from "../../components/BasicCard";
@@ -24,32 +24,33 @@ export default function Plant({ navigation, route }) {
     const [refresh, setRefresh] = useState(false);
     const [loadingHistory, setLoadingHistory] = useState(false);
 
+    const [loadingPrediction, setLoadingPrediction] = useState(false);
+
     const [plant, setPlant] = useState(null);
     const [fetchError, setFetchError] = useState(false);
+    const [fetchErrorMessage, setFetchErrorMessage] = useState('');
     const [currentX, setCurrentX] = useState(0);
     const [currentY, setCurrentY] = useState(0);
 
     const [image, setImage] = useState(null);
     const [popupSelectImageVisible, setPopupSelectImageVisible] = useState(false);
 
-    const [historico, setHistorico] = useState([{ 'id': 1, 'title': 'Saudável', 'date': '2026-07-10', 'confidence': 0.97 },
-    { 'id': 2, 'title': 'Ferrugem Asiática', 'date': '2026-10-13', 'confidence': 0.84 }
-    ]);
-
     const [history, setHistory] = useState([]);
 
     async function getHistory(plantId) {
+        setFetchError(false);
+        setFetchErrorMessage('');
         setLoadingHistory(true);
+
         const res = await getHistoryByPlantId({ plantId: plantId });
 
         setLoadingHistory(false);
 
         if (!res.success) {
+            setFetchErrorMessage("Não foi possível carregar o histórico dessa planta :/")
             setFetchError(true);
-            console.log("deu erro diva")
         } else {
             setHistory(res.history);
-            console.log("deu certo diva")
         }
 
     }
@@ -74,7 +75,7 @@ export default function Plant({ navigation, route }) {
         const res = await deletePlant({ plantId: plant.id });
 
         if (!res.success) {
-            alert('Erro ao excluir planta.');
+            Alert.alert("Erro", 'Erro ao excluir planta.');
         } else {
             Alert.alert("Sucesso", "Planta excluída com sucesso!");
             onGoBack(true);
@@ -169,17 +170,22 @@ export default function Plant({ navigation, route }) {
 
     async function sendImageForEvaluation() {
         if (image) {
+            setPopupSelectImageVisible(false);
+            setLoadingPrediction(true);
             const res = await sendImageForDiagnosis({ plantId: plant.id, image: image });
 
             if (!res.success) {
+                setLoadingPrediction(false);
+                closeImagePopup();
                 setFetchError(true);
             } else {
-                alert('Diagnóstico realizado com sucesso!');
+                Alert.alert("Sucesso", 'Diagnóstico realizado com sucesso!');
+                setLoadingPrediction(false);
                 closeImagePopup();
                 getHistory(plant.id);
             }
         } else {
-            alert("Imagem não selecionada.")
+            Alert.alert("Atenção", "Imagem não selecionada.")
         }
     }
 
@@ -242,10 +248,16 @@ export default function Plant({ navigation, route }) {
                         <HistoryCard prediction={h.predicao} key={h.id} date={h.uploadDate} confidence={h.nivelSaudePredicao} photoUrl={h.foto_url} onPress={() => navigation.navigate('Diagnóstico de Planta', { plant: plant, plantHistory: h })} />
                     ))}
 
+                    {loadingHistory ?
+                        <ActivityIndicator size="large" />
+                        : null}
+
+                    {history.length == 0 & !loadingHistory ? <Text style={{ color: Colors.softGray.color, fontWeight: '600', textAlign: 'center' }}>Sem diagnósticos ainda...</Text> : null}
+
+                    <Text style={{ color: Colors.colorDanger.color, display: fetchError ? 'flex' : 'none' }}>{fetchErrorMessage}</Text>
+
                 </ScrollView>
             </View>
-
-            <Text style={{ color: Colors.colorDanger.color, display: fetchError ? 'flex' : 'none' }}>{fetchError}</Text>
 
             <Popup
                 visible={popupEditPlantVisible}
@@ -300,10 +312,15 @@ export default function Plant({ navigation, route }) {
                 }
             </Popup>
 
+            <ModalContainer visible={loadingPrediction}>
+                <ActivityIndicator size="large" color={Colors.white.color} />
+            </ModalContainer>
+
             <StatusBar style="dark" />
         </View >
     );
 }
+
 
 export function HistoryCard({ prediction, date, confidence, onPress, photoUrl }) {
     const formattedDate = new Date(date).toLocaleDateString('pt-BR');
@@ -333,8 +350,12 @@ export function HistoryCard({ prediction, date, confidence, onPress, photoUrl })
 }
 
 export function formatPrediction({ prediction }) {
-    return prediction
-        .replace(/_/g, ' ')
-        .toLowerCase()
-        .replace(/\b\w/g, (char) => char.toUpperCase());
+    if (prediction) {
+        return prediction
+            .replace(/_/g, ' ')
+            .toLowerCase()
+            .replace(/\b\w/g, (char) => char.toUpperCase());
+    } else {
+        return;
+    }
 }

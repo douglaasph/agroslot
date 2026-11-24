@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import ThemedStyles, { Colors } from "../styles/stylesheets";
 import Popup from "../components/Modal";
 import { useEffect, useState } from "react";
@@ -22,6 +22,7 @@ export default function HomeScreen({ navigation }) {
   const [plantations, setPlantations] = useState([]);
   const [fetchError, setFetchError] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  const [loadingPlantations, setLoadingPlantations] = useState(false);
 
   const handleLogout = async () => {
     await logout();
@@ -45,8 +46,10 @@ export default function HomeScreen({ navigation }) {
   }, []);
 
   useEffect(() => {
+    setLoadingPlantations(true);
     async function tryGetPlantations() {
       const res = await getPlantations();
+      setLoadingPlantations(false);
       if (!res.success) {
         setFetchError(true);
       } else {
@@ -98,6 +101,8 @@ export default function HomeScreen({ navigation }) {
             paddingBottom: 60,
             gap: 10
           }}>
+          {loadingPlantations ? <ActivityIndicator size='large' /> : null}
+
           {plantations?.map((p) => (
             <BasicCard key={p.id} style={{ width: '100%' }}>
               <Pressable style={{ flex: 1, gap: 8 }} onPress={() => navigation.navigate('Plantação', { rawPlantation: p })}>
@@ -120,7 +125,7 @@ export default function HomeScreen({ navigation }) {
             </BasicCard>
           ))}
 
-          {plantations.length === 0 ?
+          {plantations.length === 0 & !loadingPlantations ?
             <View>
               <Text style={{ color: Colors.softGray.color, fontWeight: '500' }}>Sem plantações ainda...</Text>
             </View>

@@ -11,10 +11,18 @@ public class BucketConfig {
     @Autowired
     MinioProps props;
 
-    @Bean
-    public MinioClient bucketClient() {
+    @Bean("minioInternal")
+    public MinioClient minioClient() {
         return MinioClient.builder()
                 .endpoint(props.getUrl())
+                .credentials(props.getAccessKey(), props.getSecretKey())
+                .build();
+    }
+
+    @Bean("minioPublic")
+    public MinioClient minioPublic() {
+        return MinioClient.builder()
+                .endpoint(props.getPublicUrl())
                 .credentials(props.getAccessKey(), props.getSecretKey())
                 .build();
     }

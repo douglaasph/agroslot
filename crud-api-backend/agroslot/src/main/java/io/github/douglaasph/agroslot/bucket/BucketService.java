@@ -5,19 +5,29 @@ import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.http.Method;
-import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Component
-@RequiredArgsConstructor
 public class BucketService {
     private static final Set<String> ALLOWED_TYPES = Set.of("image/jpeg", "image/png");
 
     private final MinioClient client;
+    private final MinioClient publicClient;
     private final MinioProps props;
+
+    public BucketService(
+            @Qualifier("minioInternal") MinioClient internalClient,
+            @Qualifier("minioPublic") MinioClient publicClient,
+            MinioProps props) {
+        this.client = internalClient;
+        this.publicClient = publicClient;
+        this.props = props;
+    }
 
     public void upload(BucketFile file) {
         validateType(file);
@@ -53,7 +63,7 @@ public class BucketService {
                     .expiry(12, TimeUnit.HOURS)
                     .build();
 
-            return client.getPresignedObjectUrl(object);
+            return publicClient.getPresignedObjectUrl(object);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

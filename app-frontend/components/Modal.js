@@ -15,6 +15,22 @@ export default function Popup({
     children,
 }) {
     return (
+        <ModalContainer visible={visible}
+            onClose={onClose}
+        >
+            <View style={styles.content}>
+                {children}
+            </View>
+        </ModalContainer>
+    );
+}
+
+export function ModalContainer({
+    visible,
+    onClose,
+    children,
+}) {
+    return (
         <Modal
             visible={visible}
             transparent
@@ -33,10 +49,7 @@ export default function Popup({
                         style={StyleSheet.absoluteFill}
                     />
                 </Pressable>
-
-                <View style={styles.content}>
-                    {children}
-                </View>
+                {children}
             </View>
         </Modal>
     );

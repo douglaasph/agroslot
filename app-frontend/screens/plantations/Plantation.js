@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
-import { Alert, Pressable, Text, View, ScrollView } from "react-native";
+import { Alert, Pressable, Text, View, ScrollView, ActivityIndicator } from "react-native";
 import BasicButton from "../../components/BasicButton";
 import CreatePlantationForm from "../../components/CreatePlantationForm";
 import CreatePlantForm from "../../components/CreatePlantForm";
@@ -9,7 +9,6 @@ import Popup from "../../components/Modal";
 import { deletePlantation, getPlantation } from "../../services/plantation";
 import ThemedStyles, { Colors } from "../../styles/stylesheets";
 import { getPlantsByPlantationId } from "../../services/plant";
-import DropdownC from "../../components/Dropdown";
 
 export default function Plantation({ navigation, route }) {
     const { rawPlantation } = route.params;
@@ -24,11 +23,11 @@ export default function Plantation({ navigation, route }) {
     const [chosenPosicaoY, setChosenPosicaoY] = useState(null);
     const [plantationId, setPlantationId] = useState(null);
 
-    // plantations
+    // plantation & plants
     const [plantation, setPlantation] = useState(null);
     const [fetchError, setFetchError] = useState(false);
-    // mock for a 3 row 5 col plantation
     const [plants, setPlants] = useState([]);
+    const [loadingPlants, setLoadingPlants] = useState(false);
 
     async function tryGetPlantation() {
         const res = await getPlantation({ plantationId: plantation.id });
@@ -40,7 +39,11 @@ export default function Plantation({ navigation, route }) {
     }
 
     async function getPlants() {
+        setLoadingPlants(true);
+
         const res = await getPlantsByPlantationId({ plantationId: rawPlantation.id, rows: rawPlantation.linhas, cols: rawPlantation.colunas });
+
+        setLoadingPlants(false);
         if (!res.success) {
             setFetchError(true);
         } else {
@@ -73,7 +76,7 @@ export default function Plantation({ navigation, route }) {
         }
     }
 
-    function openCreatePlantForm({p_x, p_y}) {
+    function openCreatePlantForm({ p_x, p_y }) {
         setPlantationId(plantation.id)
         setChosenPosicaoX(p_x);
         setChosenPosicaoY(p_y);
@@ -99,20 +102,20 @@ export default function Plantation({ navigation, route }) {
                 <BasicButton onPress={() => setPopupVisible(true)} title={"Editar"} />
                 <BasicButton onPress={() => setPopupDeleteVisible(true)} title={"Deletar"} color={Colors.colorDanger.color} />
             </View>
-            
-            <View style={{padding: 15, flexDirection: 'row', alignContent: 'space-between', justifyContent: 'space-between', width: '90%'}}>
-                <View style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
-                    <View style={{backgroundColor: Colors.colorPrimary.color, borderRadius: '50%', width: 15, height: 15}} />
+
+            <View style={{ padding: 15, flexDirection: 'row', alignContent: 'space-between', justifyContent: 'space-between', width: '90%' }}>
+                <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
+                    <View style={{ backgroundColor: Colors.colorPrimary.color, borderRadius: '50%', width: 15, height: 15 }} />
                     <Text>Saudável</Text>
-                </View> 
-                <View style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
-                    <View style={{backgroundColor: 'orange', borderRadius: '50%', width: 15, height: 15}} />
+                </View>
+                <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
+                    <View style={{ backgroundColor: 'orange', borderRadius: '50%', width: 15, height: 15 }} />
                     <Text>Atenção</Text>
-                </View>      
-                <View style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
-                    <View style={{backgroundColor: Colors.colorDanger.color, borderRadius: '50%', width: 15, height: 15}} />
+                </View>
+                <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
+                    <View style={{ backgroundColor: Colors.colorDanger.color, borderRadius: '50%', width: 15, height: 15 }} />
                     <Text>Perigo</Text>
-                </View>   
+                </View>
             </View>
 
             <View style={{
@@ -145,7 +148,7 @@ export default function Plantation({ navigation, route }) {
                                                 }}
                                             >
                                                 {plants?.filter((p) => p.posicaoX === index + 1).map((p) => (
-                                                    <PlantSlot key={p.id} available={p.available} status={p.status} onPress={() => p.available ? openCreatePlantForm({p_x: p.posicaoX, p_y: p.posicaoY}) : navigation.navigate('Planta', {'rawPlant': p, 'plantation': plantation, 'onGoBack': (update) => { if (update) getPlants()}})} />
+                                                    <PlantSlot key={p.id} available={p.available} status={p.status} onPress={() => p.available ? openCreatePlantForm({ p_x: p.posicaoX, p_y: p.posicaoY }) : navigation.navigate('Planta', { 'rawPlant': p, 'plantation': plantation, 'onGoBack': (update) => { if (update) getPlants() } })} />
                                                 ))}
                                             </View>
                                         ))}
@@ -161,10 +164,10 @@ export default function Plantation({ navigation, route }) {
             <Text style={{ color: Colors.colorDanger.color, display: fetchError ? 'flex' : 'none' }}>{fetchError}</Text>
 
             <Popup
-                    visible={popupCreatePlantVisible}
-                    onClose={() => setPopupCreatePlantVisible(false)}
-                >
-       <CreatePlantForm onCancel={() => setPopupCreatePlantVisible(false)} plantation_id={plantationId} posicao_x={chosenPosicaoX} posicao_y={chosenPosicaoY} onCreate={() => setRefresh(true)} />
+                visible={popupCreatePlantVisible}
+                onClose={() => setPopupCreatePlantVisible(false)}
+            >
+                <CreatePlantForm onCancel={() => setPopupCreatePlantVisible(false)} plantation_id={plantationId} posicao_x={chosenPosicaoX} posicao_y={chosenPosicaoY} onCreate={() => setRefresh(true)} />
             </Popup>
 
             <Popup
@@ -191,6 +194,8 @@ export default function Plantation({ navigation, route }) {
                     <BasicButton color={Colors.colorDanger.color} title="Deletar" onPress={tryDelete} />
                 </View>
             </Popup>
+
+            {loadingPlants ? <ActivityIndicator size="large" color={Colors.white.color} style={{ alignSelf: 'center', bottom: '50%', position: 'absolute' }} /> : null}
 
             <StatusBar style="auto" />
         </View >
